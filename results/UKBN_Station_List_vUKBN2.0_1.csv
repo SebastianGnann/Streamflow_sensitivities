@@ -1,0 +1,147 @@
+﻿Station,Region,River,Location,Low_Score,Med_Score,High_Score,Total_Score,Low_Qualifier,Med_Qualifier,High_Qualifier,Additional_Comment,Easting,Northing,Area_km2,Median_Elevation,Base_Flow_Index
+2002,SEPA-NW,Brora,Bruachrobie,2,2,2,6,,,,,289200,903900,434.4,239.9,0.3
+3003,SEPA-NW,Oykel,Easter Turnaig,2,2,2,6,,,,,240300,900100,330.7,272.9,0.22
+4005,SEPA-NW,Meig,Glenmeanie,2,2,2,6,,,,,228600,852800,120.5,460,0.25
+7001,SEPA-NW,Findhorn,Shenachie,2,2,2,6,,,,,282600,833500,415.6,558.6,0.36
+8004,SEPA-NW,Avon,Delnashaugh,2,2,2,6,,,,,318500,835200,542.8,491.6,0.55
+8009,SEPA-NW,Dulnain,Balnaan Bridge,2,2,2,6,Quality of data pre-1986 not confirmed,Quality of data pre-1986 not confirmed,Quality of data pre-1986 not confirmed,Advised to use data from 1986 only as quality of data pre-1986 not confirmed,297700,824800,272.2,447.3,0.44
+8013,SEPA-NW,Feshie,Feshie Bridge,2,2,2,6,,,,,285000,804700,231,618.1,0.49
+11004,SEPA-NE,Urie,Pitcaple,2,2,2,6,,,,,372100,826000,198,195.8,0.74
+12001,SEPA-NE,Dee,Woodend,2,2,2,6,,,,,363500,795600,1370,508.1,0.53
+12005,SEPA-NE,Muick,Invermuick,2,2,2,6,,,,,336400,794800,110,616.1,0.5
+13004,SEPA-NE,Prosen Water,Prosen Bridge,2,2,2,6,,,,,339600,758500,104,412.1,0.55
+15023,SEPA-NE,Braan,Hermitage,2,2,2,6,,,,,301300,742200,210,396,0.43
+15025,SEPA-NE,Ericht,Craighall,2,2,2,6,,,,,317400,747200,432,422.6,0.48
+16003,SEPA-NE,Ruchill Water,Cultybraggan,2,2,2,6,,,,,276400,720400,99.5,389.6,0.29
+17005,SEPA-SE,Avon,Polmonthill,1,2,2,5,"AIs thought to have moderate influence on low flows, but influence not quantified ",,,,295200,679700,195.3,167.7,0.41
+18001,SEPA-SE,Allan Water,Kinbuck,2,2,2,6,,,,,279200,705400,161,223.8,0.44
+18011,SEPA-SE,Forth,Craigforth,0,2,2,4,Compensation flows from Loch Venachar,,,,277700,695500,1036,181.1999969,0.41
+20007,SEPA-SE,Gifford Water,Lennoxlove,2,2,2,6,,,,,351100,671700,64,197.9,0.59
+21006,SEPA-SE,Tweed,Boleside,0,2,2,4,Changing compensation flow patterns,,,,349800,633400,1500,341.1,0.51
+21017,SEPA-SE,Ettrick Water,Brockhoperig,2,2,2,6,,,,,323400,613200,37.5,475.2,0.33
+21023,SEPA-SE,Leet Water,Coldstream,2,1,1,4,,Backwater effect,Backwater effect,,384000,639700,113,74.1,0.33
+21024,SEPA-SE,Jed Water,Jedburgh,2,2,2,6,,,,,365600,621400,139,240.5,0.41
+22001,EA-NE,Coquet,Morwick,2,2,2,6,,,,,423400,604500,569.8,191.8,0.44
+23004,EA-NE,South Tyne,Haydon Bridge,2,2,2,6,,,,,385700,564700,751.1,332.6,0.34
+24004,EA-NE,Bedburn Beck,Bedburn,2,2,2,6,,,"Hard to gauge at high flows, but all contained",,411800,532200,74.9,322.1,0.46
+25003,EA-NE,Trout Beck,Moor House,2,2,2,6,,,,,375800,533500,11.4,650.1,0.13
+25006,EA-NE,Greta,Rutherford Bridge,2,2,2,6,,,"Hard to gauge at high flows, but all contained",,403400,512200,86.1,409.6,0.22
+26003,EA-Y,Foston Beck,Foston Mill,1,2,2,5,"Groundwater abstraction, but influence not quantified ",,,,509400,454900,57.2,77.4,0.96
+27035,EA-Y,Aire,Kildwick Bridge,2,2,0,4,,,Site poor at capturing high flows,,401100,445700,282.3,199.8,0.37
+27042,EA-Y,Dove,Kirkby Mills,2,2,0,4,,,"Site poor at capturing high flows, too few gaugings",,470500,485500,59.2,200.6,0.61
+27047,EA-Y,Snaizeholme Beck,Low Houses,2,2,1,5,,,Too few gaugings in high flow range,,383300,488300,10.2,431.9,0.18
+27051,EA-Y,Crimple,Burn Bridge,2,2,2,6,,,"Hard to gauge at high flows, but all contained",,428400,451900,8.1,171,0.31
+27071,EA-Y,Swale,Crakehill,1,2,0,3,Low flow performance not confirmed,,Site poor at capturing high flows,Advised to use data from 1980 only as Issue with homogeneity as time-series due to combination of two stations (see NRFA station description),442500,473300,1363,103.7,0.48
+27073,EA-Y,Brompton Beck,Snainton Ings,2,2,2,6,,,,,493600,479500,12.9,61.4,0.91
+27084,EA-Y,Eastburn Beck,Crosshills,2,2,2,6,,,"Site does back up, but this is not thought to have a large impact at high flows",,402000,445300,43.35,268.8,0.35
+28046,EA-WM,Dove,Izaak Walton,2,2,2,6,,,,,414700,351000,83,314.6,0.79
+28072,EA-EM,Greet,Southwell,1,2,1,4,Substantial groundwater and surface water abstraction,,Hydrometric uncertainty at high flows,,471500,353900,46.2,63.6,0.7
+29003,EA-LN,Lud,Louth,1,2,1,4,"AIs thought to have moderate influence on low flows, but influence not quantified ",,Work due to be completed in 2016 on retention ponds which will reduce flood peaks,,533700,387900,55.2,89.2,0.9
+29009,EA-LN,Ancholme,Toft Newton,2,2,1,5,,,Too few gaugings in high flow range,,503200,387500,27.2,25.9,0.52
+30004,EA-LN,Lymn,Partney Mill,1,2,2,5,"AIs thought to have moderate influence on low flows, but influence not quantified ",,,,540200,367600,61.6,60.6,0.65
+30012,EA-LN,Stainfield Beck,Cream Poke Farm,2,2,1,5,,,Caution over suspected inhomogeneity in high flow record,,512700,373900,37.4,53.7,0.45
+30015,EA-LN,Cringle Brook,Stoke Rochford,2,2,1,5,,,Too few gaugings in high flow range,,492500,329700,50.5,131.2,0.89
+31023,EA-LN,West Glen,Easton Wood,2,2,1,5,,,Too few gaugings in high flow range,,496600,325800,4.4,109.9,0.12
+32003,EA-LN,Harpers Brook,Old Mill Bridge,2,2,1,5,,,Suspected inhomogeneity around 1965 (due to change in gauging structure); Too few gaugings in high flow range,,498400,279800,74.3,89.9,0.47
+33018,EA-EA,Tove,Cappenham Bridge,2,2,1,5,,,Site becomes non-modular around QMED; Likely out of bank flow above QMED with too few gaugings to confirm rating,,471100,248700,138.1,133.3,0.54
+33019,EA-EA,Thet,Melford Bridge,0,2,2,4,Substantial groundwater abstractions,,,,588000,283000,316,38.4,0.78
+33029,EA-EA,Stringside,Whitebridge,1,2,2,5,"Groundwater abstraction, but influence not quantified ",,,,571600,300600,98.8,19.8,0.85
+34011,EA-EA,Wensum,Fakenham,1,2,1,4,"Evidence of groundwater abstraction, but influence not quantified",,Too few gaugings in high flow range,,591900,329300,161.9,62.5,0.82
+36003,EA-EA,Box,Polstead,1,2,2,5,"Evidence of surface and groundwater abstraction, but influence not quantified",,,,598500,237900,53.9,62.1,0.62
+36009,EA-EA,Brett,Cockfield,2,2,1,5,,,Hydrometric uncertainty at high flows,,591400,252500,25.7,88.4,0.32
+36010,EA-EA,Bumpstead Brook,Broad Green,2,2,2,6,,,,,568900,241800,28.3,97.7,0.23
+37005,EA-EA,Colne,Lexden,1,2,1,4,"Evidence of surface and groundwater abstraction, but influence not quantified",,Bypassing on the left bank at very high flows,,596200,226100,238.2,67.8,0.52
+38026,EA-HNL,Pincey Brook,Sheering Hall,2,2,1,5,,,Hydrometric uncertainty at high flows,,549500,212700,54.6,80.8,0.42
+39017,EA-T,Ray,Grendon Underwood,2,2,0,4,,,Site poor at capturing high flows,,468100,221100,18.8,84,0.17
+39019,EA-T,Lambourn,Shaw,2,2,0,4,,,Site poor at capturing high flows (bypassing and becomes non-modular),,447000,168200,234.1,165.5,0.97
+39020,EA-T,Coln,Bibury,2,2,2,6,,,,,412100,206200,106.7,193.6,0.93
+39025,EA-T,Enborne,Brimpton,2,2,2,6,,,,,456800,164800,147.6,113.3,0.53
+39028,EA-T,Dun,Hungerford,2,2,2,6,,,,,432100,168500,101.3,155.9,0.95
+39034,EA-T,Evenlode,Cassington Mill,2,2,1,5,,,Bypassing at high flows,,444800,209900,430,135.5,0.71
+39065,EA-T,Ewelme Brook,Ewelme,2,2,2,6,,,"Responsive fraction from urbanisation close to gauge, so some caution might be needed when analysing  15-minute data",,464200,191600,13.4,133.4,0.98
+39101,EA-T,Aldbourne,Ramsbury,2,2,2,6,,,,,428900,171700,53.1,187,0.96
+40005,EA-KSL,Beult,Stilebridge,0,2,2,4,Discharges thought to have a substantial influence on low flows,,,,575900,147800,277.1,38.8,0.23
+40011,EA-KSL,Great Stour,Horton,1,2,2,5,Multiple influences. Evidence of substantial abstractions and discharges (see station description); Overall net effect thought to be modest - compromise due to long-record and lack of alternatives in this area ,,,,611500,155400,345,75,0.7
+41022,EA-SSD,Lod,Halfway Bridge,2,2,2,6,,,,,493100,122300,52,69.9,0.35
+41025,EA-SSD,Loxwood Stream,Drungewick,1,2,0,3,Substantial effluent discharges and evidence of abstractions,,Multiple issues with high flow performance (see station description),,506000,130900,91.6,59.9,0.22
+41027,EA-SSD,Rother,Princes Marsh,2,2,0,4,,,Flows  above ~6 cumecs non-modular so low confidence in rating above this point,,477200,127000,37.2,98.4,0.6
+41029,EA-SSD,Bull,Lealands,2,2,1,5,,,Too few gaugings in high flow range,,557600,113000,40.8,58.2,0.37
+42003,EA-SSD,Lymington,Brockenhurst,2,1,0,3,,Evidence of inhomogeneity (truncation of high flows pre-1997 due to change in gauging structure); Evidence of land-drainage influence in the catchment,Evidence of inhomogeneity (truncation of high flows pre-1997 due to change in gauging structure); Evidence of land-drainage influence in the catchment,,431800,101900,98.9,41.6,0.35
+42008,EA-SSD,Cheriton Stream,Sewards Bridge,1,2,2,5,Evidence of surface and groundwater abstraction and  presence of cress beds and fish farms - thought to be least impacted  Itchen sub-catchment,,,,457400,132200,75.1,115,0.96
+42010,EA-SSD,Itchen,Highbridge & Allbrook Total,0,2,2,4,Evidence of substantial surface and groundwater abstraction and  presence of cress beds and fish farms,,,,446100,121100,360,107.2,0.96
+42016,EA-SSD,Itchen,Easton,0,2,2,4,Evidence of substantial surface and groundwater abstraction and  presence of cress beds and fish farms,,,,451100,132500,236.8,119.3,0.97
+43014,EA-WX,East Avon,Upavon,2,2,2,6,,,,,413400,155900,85.78,139.2,0.89
+44006,EA-WX,Sydling Water,Sydling St Nicholas,2,2,1,5,,,Bypassing at high flows,,363200,99600,12.4,189.8,0.88
+44009,EA-WX,Wey,Broadwey,0,2,2,4,Groundwater abstraction  suspected to influence homogeneity of series at low flows,,,,366600,83900,7,102.5,0.94
+45005,EA-DC,Otter,Dotton,1,2,2,5,"AIs thought to have moderate influence on low flows, but influence not quantified  ",,,,308700,88400,202.5,130.8,0.53
+46003,EA-DC,Dart,Austins Bridge,0,2,2,4,Venford Reservoir operation affects low flows,,,,275100,65800,247.6,347.3,0.52
+46005,EA-DC,East Dart,Bellever,2,2,2,6,,,,,265700,77600,21.5,457.5,0.44
+47009,EA-DC,Tiddy,Tideford,2,2,2,6,,,,,234400,59600,37.2,107.6,0.58
+48003,EA-DC,Fal,Tregony,2,2,2,6,,,,,192100,44700,87,125,0.67
+48004,EA-DC,Warleggan,Trengoffe,2,2,2,6,,,,,216000,67400,25.3,232,0.7
+49004,EA-DC,Gannel,Gwills,2,2,2,6,,,,,182900,59300,41,77.6,0.67
+50002,EA-DC,Torridge,Torrington,2,2,2,6,,,,,250000,118600,663,145.7,0.38
+52010,EA-WX,Brue,Lovington,2,2,0,4,,,Suspected inhomogeneity due to construction of Bruton Dam flood storage reservoir in 1983 after extensive flooding in the town,,359000,131800,135.2,105.1,0.48
+52016,EA-WX,Currypool Stream,Currypool Farm,2,2,1,5,,,Caution due to varying bankfull level over time and bypassing in older record,,322100,138200,15.7,173.8,0.71
+53006,EA-WX,Frome (Bristol),Frenchay,2,1,2,5,,"11.4% urbanised, but few long records in this region",,,363800,177200,148.9,65.8,0.38
+53008,EA-WX,Avon,Great Somerford,1,2,2,5,"Evidence of groundwater abstraction, but influence not quantified",,,,396500,183300,303,114.3,0.57
+53009,EA-WX,Wellow Brook,Wellow,2,2,2,6,,,,,374000,158000,72.6,135.3,0.62
+53017,EA-WX,Boyd,Bitton,2,2,2,6,,,,,368100,169900,47.9,105.4,0.44
+54008,EA-WM,Teme,Tenbury,2,1,2,5,,General scatter in rating across flow regime,,,359800,268500,1134.4,213.7,0.56
+54018,EA-WM,Rea Brook,Hookagate,2,2,2,6,,,,,346600,309200,178,145.1,0.51
+54025,NRW,Dulas,Rhos-y-pentref,1,2,2,5,Gravel accumulation in flume has potentially introduced a homogeneity issue,,,,295000,282500,52.7,336.5,0.4
+54034,EA-WM,Dowles Brook,Oak Cottage,2,2,0,4,,,Too few gaugings at high flow (> ~ 10 cumecs) to have any confidence ,,377100,276400,40.8,129.4,0.4
+54036,EA-WM,Isbourne,Hinton on the Green,0,2,2,4,Multiple influences with effluent discharges having substantial influence on low flows,,,,402400,240700,90.7,98.4,0.56
+55008,CEHW,Wye,Cefn Brwyn,2,2,2,6,,,,,282900,283800,10.55,479.8,0.31
+55014,EA-WM,Lugg,Byton,2,2,1,5,,,Too few gaugings in high flow range,,336400,264700,203.3,285.7,0.65
+55016,NRW,Ithon,Disserth,2,2,2,6,,,,,302500,257800,358,318.3,0.39
+55026,NRW,Wye,Ddol Farm,2,2,2,6,,,,,297600,267600,174,384.1,0.38
+55029,NRW,Monnow,Grosmont,2,2,2,6,,,,,341600,224800,354,183.3,0.51
+55034,CEHW,Cyff,Cyff flume,2,2,2,6,,,,,282400,284200,3.07,479.7,0.29
+56013,NRW,Yscir,Pont-Ar-Yscir,2,2,1,5,,,Too few gaugings in high flow range,,300300,230400,62.8,360.9,0.46
+57004,NRW,Cynon,Abercynon,2,2,2,6,,,,,307900,195700,106,264.9,0.4
+60002,NRW,Cothi,Felin Mynachdy,2,2,2,6,,,,,250900,222500,297.8,228.6,0.43
+60003,NRW,Taf,Clog-y-Fran,2,2,1,5,,,Too few gaugings in high flow range,,223800,216000,217.3,121.8,0.55
+60012,NRW,Twrch,Ddol Las,2,2,2,6,,,,,265000,244000,20.7,306,0.35
+62001,NRW,Teifi,Glanteifi,2,2,2,6,,,,,224400,241700,893.6,195.4,0.54
+64001,NRW,Dyfi,Dyfi Bridge,2,2,2,6,,,,,274500,302000,471.3,261.3,0.39
+65001,NRW,Glaslyn,Beddgelert,1,2,1,4,Suffers from mobile bed and influence of HEP scheme on low flows,,Bypassing at high flows,,259200,347800,68.6,325,0.32
+65005,NRW,Erch,Pencaenewydd,2,2,2,6,,,,,240000,340400,18.1,143,0.54
+66004,NRW,Wheeler,Bodfari,2,2,0,4,,,Too few gaugings in high flow range; Bypassing and non-modular flow,,310500,371300,62.9,199.1,0.82
+67010,NRW,Gelyn,Cynefail,2,2,2,6,,,,,284200,342000,13.1,411.1,0.26
+67018,NRW,Dee,New Inn,2,2,0,4,,,Bypassing and substantial gauging scatter in  high flow range,,287400,330800,53.9,394,0.28
+68005,EA-GMMC,Weaver,Audlem,2,1,2,5,, Full series is inhomogeneous ,,Advised to use data from 1970 only due to rating change,365300,343000,207,86.1,0.54
+71001,EA-CL,Ribble,Samlesbury,0,2,2,4,Augmented by upstream impoundments and substantial discharges,,Advised to use NRFA 15-minute POT data after 1977 only (threshold change issue) ,,358900,430400,1145,197.9,0.34
+71004,EA-CL,Calder,Whalley Weir,0,2,2,4,Suspected low flow homogeneity issues (see station description),,,,372900,436100,316,209,0.42
+72005,EA-CL,Lune,Killington,2,2,2,6,,,,,362200,490600,219,293.5,0.33
+72014,EA-CL,Conder,Galgate,2,2,2,6,,,,,348200,455400,28.5,104.2,0.35
+73005,EA-CL,Kent,Sedgwick,2,2,2,6,,,,,350900,487400,209,204.5,0.41
+73011,EA-CL,Mint,Mint Bridge,2,2,2,6,,,,,352400,494500,65.8,209.3,0.37
+73015,EA-CL,Keer,High Keer Weir,2,2,2,6,,,,,352300,471900,48,91.6,0.37
+74001,EA-CL,Duddon,Duddon Hall,0,2,2,4,Substantial abstraction from Ulpha pumping station upstream,,,,319500,489600,85.66,291,0.29
+75017,EA-CL,Ellen,Bullgill,2,2,0,4,,,Site poor at capturing high flows,,309600,538400,96,157.8,0.49
+76014,EA-CL,Eden,Kirkby Stephen,2,2,2,6,,,,,377300,509700,69.4,376.1,0.26
+77004,SEPA-SW,Kirtle Water,Mossknowe,2,2,2,6,,,,,328500,569300,72,123.6,0.29
+78004,SEPA-SW,Kinnel Water,Redhall,2,2,2,6,,,,,307700,586900,76.1,235.3,0.27
+79002,SEPA-SW,Nith,Friars Carse,2,2,2,6,,,,,292300,585100,799,288,0.39
+79004,SEPA-SW,Scar Water,Capenoch,2,2,2,6,,,,,284500,594100,142,318.7,0.31
+81002,SEPA-SW,Cree,Newton Stewart,2,2,2,6,,,,,241300,565300,368,211.6,0.28
+81004,SEPA-SW,Bladnoch,Low Malzie,2,2,2,6,,,,,238200,554500,334,93.9,0.34
+83006,SEPA-SW,Ayr,Mainholm,2,2,2,6,,,,,236200,621600,574,212,0.3
+83010,SEPA-SW,Irvine,Newmilns,2,2,2,6,,,,,253300,637200,72.8,240,0.28
+84022,SEPA-SW,Duneaton,Maidencots,2,2,2,6,,,,,293000,626000,110.3,333.9,0.41
+85003,SEPA-SW,Falloch,Glen Falloch,1,2,2,5,"HEP scheme and water transfer within catchment, but influence not quantified",,,,232100,719500,80.3,445.9,0.16
+90003,SEPA-NW,Nevis,Claggan,2,2,2,6,,,,,211600,774300,69.2,518,0.26
+93001,SEPA-NW,Carron,New Kelso,2,2,2,6,,,,,194200,842900,137.8,341.6,0.26
+94001,SEPA-NW,Ewe,Poolewe,2,2,2,6,,,,,186000,880300,441.1,310.4,0.63
+95001,SEPA-NW,Inver,Little Assynt,0,2,2,4,Operation of gates for fisheries purposes immediately upstream which influences low flows,,,,214700,924900,137.5,268.2,0.66
+96002,SEPA-NW,Naver,Apigill,2,2,2,6,,,,,271400,956800,477,187,0.42
+102001,NRW,Cefni,Bodffordd,2,2,1,5,,,Too few gaugings in high flow range,,242900,376900,21.7,67.5,0.45
+201005,RA,Camowen,Camowen Terrace,0,2,2,4,Influence of HEP scheme on low flows,,,,246100,373000,276.6,150.5,0.47
+201008,RA,Derg,Castlederg,2,2,2,6,,,,,226500,384200,335.4,171.6,0.32
+202002,RA,Faughan,Drumahoe,2,2,2,6,,,,,246400,415100,273.1,172.6,0.47
+203028,RA,Agivey,Whitehill,1,2,2,5,"Recent HEP scheme installed which is of concern for low flows, but influence not quantified  ",,,,288300,419400,100.5,161.6,0.36
+203042,RA,Crumlin,Cidercourt Bridge,1,2,2,5,Suspected low flow homogeneity issue due to shifting bed at gauging station location,,,,313500,376500,55.3,127,0.34
+204001,RA,Bush,Seneirl Bridge,2,2,2,6,,,,,294200,436300,299.2,89.8,0.5
+205008,RA,Lagan,Drumiller,2,2,2,6,,,,,323600,352500,84.6,156,0.35
+206001,RA,Clanrye,Mountmill Bridge,2,2,2,6,,,,,308500,331000,120.3,89.4,0.5
