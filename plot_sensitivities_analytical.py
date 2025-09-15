@@ -278,12 +278,12 @@ def plot_sensitivities():
             ax_P.set_xscale("log")
             ax_P.set_xlim(0.1, 10)
             ax_P.xaxis.set_major_formatter(ticker.FuncFormatter(fmt_func))
-            ax_P.set_ylim(-0.5, 1.5)
+            ax_P.set_ylim(-0.2, 1.2)
             for method in method_order:
                 group_data = results_P[results_P["method"] == method]
                 if not group_data.empty:
                     color = custom_palette.get(method, "black")
-                    smoothed = sm.nonparametric.lowess(group_data["sensitivity"], group_data["aridity_index"], frac=0.2)
+                    smoothed = sm.nonparametric.lowess(group_data["sensitivity"], group_data["aridity_index"], frac=0.1)
                     line, = ax_P.plot(smoothed[:, 0], smoothed[:, 1], color=color, linewidth=2, alpha=0.9,
                                       linestyle="solid", zorder=5, label=method)
                     if method not in method_handles_P:
@@ -303,12 +303,12 @@ def plot_sensitivities():
             ax_PET.set_xscale("log")
             ax_PET.set_xlim(0.1, 10)
             ax_PET.xaxis.set_major_formatter(ticker.FuncFormatter(fmt_func))
-            ax_PET.set_ylim(-1.5, 0.5)
+            ax_PET.set_ylim(-1.2, 0.2)
             for method in method_order:
                 group_data = results_PET[results_PET["method"] == method]
                 if not group_data.empty:
                     color = custom_palette.get(method, "black")
-                    smoothed = sm.nonparametric.lowess(group_data["sensitivity"], group_data["aridity_index"], frac=0.2)
+                    smoothed = sm.nonparametric.lowess(group_data["sensitivity"], group_data["aridity_index"], frac=0.1)
                     line, = ax_PET.plot(smoothed[:, 0], smoothed[:, 1], color=color, linewidth=2, alpha=0.9,
                                         linestyle="solid", zorder=5, label=method)
                     if method not in method_handles_PET:
