@@ -17,24 +17,30 @@ def calculate_sensitivities(P, E0, n):
     dQ_dE0 =  - (1 + (E0/P)**n)**(-1/n-1)
     return dQ_dP, dQ_dE0
 
-def plot_Turc_curves():
+def calculate_sensitivity_to_aridity(P, E0, n):
+    A = E0/P
+    dQ_dA = - P * (1 + A**n)**((-1/n)-1) * A**(n-1)
+    return dQ_dA
+
+def plot_Turc_curves(n=2):
 
     # plot figure showing Q/P, dQ/dP, dQ/dE0 all vs. aridity, defined as E0/P for a range of P and E0
-    P_vec = np.linspace(0.01, 10, 100)
-    E0_vec = np.linspace(10, 0.01, 100)
-    dQdP, dQdE0 = calculate_sensitivities(P_vec, E0_vec, 2)
-    Q_vec = calculate_streamflow(P_vec, E0_vec, 2)
+    P_vec = np.linspace(1, 0.1, 100)
+    E0_vec = np.linspace(0.1, 1, 100)
+    dQdP, dQdE0 = calculate_sensitivities(P_vec, E0_vec, n)
+    Q_vec = calculate_streamflow(P_vec, E0_vec, n)
+    dQdA_vec = calculate_sensitivity_to_aridity(P_vec, E0_vec, n)
     aridity = E0_vec / P_vec
 
     fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(4, 4), constrained_layout=True)
-
-    axes[0].plot(aridity, 1- Q_vec/P_vec, color='tab:purple', linewidth=2, label='Q')
-    axes[0].set_ylabel(r"1-$Q$/$P$ [-]")
-    # Common elements for both subplots
-    axes[0].plot([0, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
-    axes[0].plot([1, 20], [1, 1], color='grey', linestyle='-', linewidth=1)
+    axes[0].plot(aridity, Q_vec/P_vec, color='tab:purple', linewidth=2, label='Q/P')
+    #axes[0].plot(aridity, dQdA_vec/P_vec, color='tab:grey', linewidth=2, label='d(Q/P)/dA')
+    #axes[0].plot(aridity, np.gradient(Q_vec, aridity)/P_vec, '--', color='darkgrey', linewidth=2, label='d(Q/P)/dA')
+    axes[0].set_ylabel(r"$Q$/$P$ [-]")
+    axes[0].plot([0, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
+    axes[0].plot([1, 20], [0, 0], color='grey', linestyle='-', linewidth=1)
     x = np.logspace(-1, 0, 100)
-    y = x
+    y = 1-x
     axes[0].plot(x, y, color='grey', linestyle='-', linewidth=1)
     axes[0].set_xscale('log')
     axes[0].set_xlim([0.1, 10])

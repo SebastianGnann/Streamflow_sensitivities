@@ -214,3 +214,33 @@ def plot_sensitivity_aridity_variable(df, n, var, vmin, vmax, cmap, figures_path
     corr_PET = df["dev_PET"].corr(df[var], method='spearman')
     print("Correlation between relative deviation of P sensitivity and " + var + ": ", np.round(corr_P, 2))
     print("Correlation between relative deviation of PET sensitivity and " + var + ": ", np.round(corr_PET, 2))
+
+
+def plot_budyko_variable(df, n, var, vmin, vmax, cmap, figures_path):
+
+    df["dev"] = (df["mean_Q"] - util_Turc.calculate_streamflow(df["mean_P"], df["mean_PET"], n))/df["mean_Q"]
+
+    fig, (ax1) = plt.subplots(1, 1, figsize=(6, 3), constrained_layout=True)
+    im1 = ax1.scatter(df["aridity_control"], df["mean_Q"]/df["mean_P"], s=5, c=df[var], vmin=vmin, vmax=vmax, cmap=cmap)
+    ax1.set_ylabel(r"$Q$/$P$ [-]")
+    ax1.set_xlim([0.1, 10])
+    ax1.set_xscale('log')
+    ax1.set_ylim([-0.2, 1.2])
+    # Common elements for both subplots
+    ax1.plot([0, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
+    ax1.plot([1, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
+    x = np.logspace(-1, 0, 100)
+    y = 1 - x
+    ax1.plot(x, y, color='grey', linestyle='--', linewidth=1)
+    P_vec = np.linspace(0.01, 10, 100)
+    E0_vec = np.linspace(10, 0.01, 100)
+    Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, n)
+    ax1.plot(E0_vec / P_vec, Q_vec / P_vec, color='white', linestyle='-', linewidth=3)
+    ax1.plot(E0_vec / P_vec, Q_vec / P_vec, color='grey', linestyle='-', linewidth=2)
+    # cbar = fig.colorbar(im1, ax=[ax1], label=' [-]', aspect=30)
+    ax1.set_xlabel(r"$E_p$/$P$ [-]")
+    cbar = fig.colorbar(im1, ax=[ax1], label=var, aspect=30)
+    plt.savefig(figures_path + 'budyko_' + var + '.png', dpi=600)
+
+    corr_P = df["dev"].corr(df[var], method='spearman')
+    print("Correlation between relative deviation of streamflow anomaly and " + var + ": ", np.round(corr_P, 2))

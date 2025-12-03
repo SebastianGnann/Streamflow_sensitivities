@@ -33,12 +33,13 @@ def generate_data(p_mean, pet_mean, corr, noise, n, years):
 def calculate_relative_error(estimated, theoretical):
     return 100 * ((estimated - theoretical) / theoretical)
 
-def plot_sensitivities():
-    p_means = np.linspace(300, 3000, 100)
-    pet_means = np.linspace(300, 3000, 100)
+def plot_sensitivities(n=2):
+
+    nr_samples = 10
+    p_means = np.linspace(300, 3000, nr_samples)
+    pet_means = np.linspace(300, 3000, nr_samples)
     correlations = [-0.5, 0.0, 0.5]
     noise_levels = [0.0, 0.025]
-    n = 2.5
 
     method_order = [
         "Nonpara.",
@@ -99,20 +100,21 @@ def plot_sensitivities():
                     sens_P_theory, sens_PET_theory = util_Turc.calculate_sensitivities(p_mean, pet_mean, n)
                     aridity_index = pet_mean / p_mean
 
-                    '''
-                    # plot P vs Q and PET vs Q for visual check
-                    plt.figure(figsize=(6,3))
-                    plt.subplot(1,2,1)
-                    plt.scatter(df_art["P"], df_art["Q"], s=10, alpha=0.7, color='tab:blue')
-                    plt.xlabel(r"P")
-                    plt.ylabel(r"Q")
-                    plt.subplot(1,2,2)
-                    plt.scatter(df_art["PET"], df_art["Q"], s=10, alpha=0.7, color='tab:orange')
-                    plt.xlabel(r"E_p")
-                    plt.ylabel(r"Q")
-                    plt.tight_layout()
-                    plt.show()
-                    '''
+                    # plot P vs Q and PET vs Q for visual check but only if we have a small sample
+                    if nr_samples <= 10:
+                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.5, 3))
+                        ax1.scatter(df_art["P"], df_art["Q"], s=25, c="tab:blue", alpha=0.8, lw=0)
+                        ax1.set_xlabel(r"$P$ [mm/y]")
+                        ax1.set_ylabel(r"$Q$ [mm/y]")
+                        ax2.scatter(df_art["PET"], df_art["Q"], s=25, c="tab:orange", alpha=0.8, lw=0)
+                        ax2.set_xlabel(r"$E_p$ [mm/y]")
+                        ax2.set_ylabel(r"$Q$ [mm/y]")
+                        fig.tight_layout()
+                        fig.savefig("figures/artificial_data_check/scatter_PET_P_vs_Q_corr_"
+                                    + str(corr) + "_noise_" + str(noise) +
+                                    "_P_" + str(int(p_mean)) + "_PET_" + str(int(pet_mean)) +
+                                    "_sP_" + str(round(sens_P_theory, 2)) + "_sPET_" + str(round(sens_PET_theory, 2)) + ".png", dpi=600)
+                        plt.close()
 
                     sens_P_method1 = np.median((df_art["Q"] - df_art["Q"].mean()) / (df_art["P"] - df_art["P"].mean()))
                     sens_PET_method1 = np.median((df_art["Q"] - df_art["Q"].mean()) / (df_art["PET"] - df_art["PET"].mean()))
@@ -364,7 +366,7 @@ def plot_sensitivities():
     df_avg_errors_pivot = df_avg_errors.pivot_table(index=["Panel", "Sensitivity"], columns="Method", values="Avg Relative Error (%)").round(2)
     print("\nAverage relative errors for each panel (category):")
     print(df_avg_errors_pivot)
-    df_avg_errors_pivot.reset_index().to_csv("results/avg_relative_errors_sensitivities.csv", index=False)
+    df_avg_errors_pivot.reset_index().to_csv("results/avg_relative_errors_sensitivities_" + str(n) + ".csv", index=False)
 
     df_avg_pvalues = pd.DataFrame(avg_pvalues_summary)
     df_avg_r2 = pd.DataFrame(avg_r2_summary)
@@ -374,8 +376,8 @@ def plot_sensitivities():
     print(df_avg_pvalues_pivot)
     print("\nAverage R2 for multivariate methods:")
     print(df_avg_r2_pivot)
-    df_avg_pvalues_pivot.reset_index().to_csv("results/avg_pvalues_sensitivities.csv", index=False)
-    df_avg_r2_pivot.reset_index().to_csv("results/avg_r2_sensitivities.csv", index=False)
+    df_avg_pvalues_pivot.reset_index().to_csv("results/avg_pvalues_sensitivities_" + str(n) + ".csv", index=False)
+    df_avg_r2_pivot.reset_index().to_csv("results/avg_r2_sensitivities_" + str(n) + ".csv", index=False)
 
     # Legends for sensitivities
     handles_P = [method_handles_P[m] for m in custom_palette.keys() if m in method_handles_P]
@@ -395,17 +397,18 @@ def plot_sensitivities():
     if not os.path.isdir(figures_path):
         os.makedirs(figures_path)
 
-    fig_P.savefig(figures_path + "theoretical_sensitivities_aridity_P.png", dpi=600, bbox_inches='tight')
-    fig_PET.savefig(figures_path + "theoretical_sensitivities_aridity_PET.png", dpi=600, bbox_inches='tight')
-    fig_bar_P.savefig(figures_path + "theoretical_sensitivities_bar_P.png", dpi=600, bbox_inches='tight')
-    fig_bar_PET.savefig(figures_path + "theoretical_sensitivities_bar_PET.png", dpi=600, bbox_inches='tight')
-    fig_bar_P_pvalues.savefig(figures_path + "theoretical_sensitivities_bar_P_pvalues.png", dpi=600, bbox_inches='tight')
-    fig_bar_PET_pvalues.savefig(figures_path + "theoretical_sensitivities_bar_PET_pvalues.png", dpi=600, bbox_inches='tight')
-    fig_bar_r2.savefig(figures_path + "theoretical_sensitivities_bar_r2.png", dpi=600, bbox_inches='tight')
+    fig_P.savefig(figures_path + "theoretical_sensitivities_aridity_P_" + str(n) + ".png", dpi=600, bbox_inches='tight')
+    fig_PET.savefig(figures_path + "theoretical_sensitivities_aridity_PET_" + str(n) + ".png", dpi=600, bbox_inches='tight')
+    fig_bar_P.savefig(figures_path + "theoretical_sensitivities_bar_P_" + str(n) + ".png", dpi=600, bbox_inches='tight')
+    fig_bar_PET.savefig(figures_path + "theoretical_sensitivities_bar_PET_" + str(n) + ".png", dpi=600, bbox_inches='tight')
+    fig_bar_P_pvalues.savefig(figures_path + "theoretical_sensitivities_bar_P_pvalues_" + str(n) + ".png", dpi=600, bbox_inches='tight')
+    fig_bar_PET_pvalues.savefig(figures_path + "theoretical_sensitivities_bar_PET_pvalues_" + str(n) + ".png", dpi=600, bbox_inches='tight')
+    fig_bar_r2.savefig(figures_path + "theoretical_sensitivities_bar_r2_" + str(n) +".png", dpi=600, bbox_inches='tight')
 
 # Run plotting and save Turc curves plot
-util_Turc.plot_Turc_curves()
+n = 2.5
+util_Turc.plot_Turc_curves(n)
 fig = plt.gcf()
-fig.savefig("figures/Turc_curves.png", dpi=600, bbox_inches='tight')
+fig.savefig("figures/Turc_curve_" + str(n) + ".png", dpi=600, bbox_inches='tight')
 
-plot_sensitivities()
+plot_sensitivities(n)

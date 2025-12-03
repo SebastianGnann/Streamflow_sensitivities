@@ -73,6 +73,8 @@ def initialize_result_lists():
         "mean_PET_over_time": [],
         "mean_Q_over_time": [],
         "aridity_over_time": [],
+        "P_seasonality_index_over_time": [],
+        "seasonality_index_over_time": [],
         "cor_PET_P_over_time": [],
         "sens_P_over_time_mr1": [],
         "sens_PET_over_time_mr1": [],
@@ -169,6 +171,8 @@ def calculate_metrics(df_tmp, id, gauge_id, wy):
             "mean_PET": [],
             "mean_Q": [],
             "aridity": [],
+            "P_seasonality_index": [],
+            "seasonality_index": [],
             "P_PET_correlation": [],
             "sens_P": [],
             "sens_PET": [],
@@ -246,11 +250,11 @@ def calculate_metrics(df_tmp, id, gauge_id, wy):
         # calculate sensitivities over time
         df_time_mr1 = sig_SensitivityOverTime(
             df_tmp["Q"].values, df_tmp["date"].values, df_tmp["P"].values,
-            df_tmp["PET"].values, id, plot_results=False, use_delta=False, fit_intercept=False, window_years=20)
+            df_tmp["PET"].values, df_tmp["T"].values, id, plot_results=False, use_delta=False, fit_intercept=False, window_years=20)
 
         df_time_mr2 = sig_SensitivityOverTime(
             df_tmp["Q"].values, df_tmp["date"].values, df_tmp["P"].values,
-            df_tmp["PET"].values, id, plot_results=False, use_delta=True, fit_intercept=True, window_years=20)
+            df_tmp["PET"].values, df_tmp["T"].values, id, plot_results=False, use_delta=True, fit_intercept=True, window_years=20)
 
         # baseflow
         BFI = sig_BFI(df_tmp["Q"].values, df_tmp["date"].values)
@@ -323,6 +327,8 @@ def calculate_metrics(df_tmp, id, gauge_id, wy):
         "mean_PET_over_time": df_time_mr1["mean_PET"].values,
         "mean_Q_over_time": df_time_mr1["mean_Q"].values,
         "aridity_over_time": df_time_mr1["aridity"].values,
+        "P_seasonality_index_over_time": df_time_mr1["P_seasonality_index"].values,
+        "seasonality_index_over_time": df_time_mr1["seasonality_index"].values,
         "cor_PET_P_over_time": df_time_mr1["P_PET_correlation"].values,
         "sens_P_over_time_mr1": df_time_mr1["sens_P"].values,
         "sens_PET_over_time_mr1": df_time_mr1["sens_PET"].values,

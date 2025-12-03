@@ -155,7 +155,7 @@ m.drawcountries()
 m.fillcontinents(color='lightgrey', lake_color='white')
 m.drawmapboundary(fill_color='white')
 x, y = m(df["gauge_lon"].values, df["gauge_lat"].values)
-scatter = m.scatter(x, y, s=20, c=df["sens_P_mr1"], alpha=0.9, vmin=0., vmax=1.0, cmap='viridis')  # invert colormap
+scatter = m.scatter(x, y, s=20, c=df["P_seasonality_index"], alpha=0.9, vmin=-1.0, vmax=1.0, cmap='magma_r')  # invert colormap
 cbar = plt.colorbar(scatter, ax=ax, pad=0.02, shrink=0.3, aspect=20)
 ax.set_xlim(np.nanmin(x) * 0.99, np.nanmax(x) * 1.01)
 ax.set_ylim(np.nanmin(y) * 0.99, np.nanmax(y) * 1.01)

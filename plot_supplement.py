@@ -82,27 +82,177 @@ df = df.reset_index()
 
 # Budyko plot
 fig, (ax1) = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
-im1 = ax1.scatter(df["aridity_control"], 1-df["mean_Q"]/df["mean_P"], s=5, alpha=0.8, c="tab:purple")
-ax1.set_ylabel(r"1-$Q$/$P$ [-]")
+im1 = ax1.scatter(df["aridity_control"], df["mean_Q"]/df["mean_P"], s=5, alpha=0.8, c="tab:purple")
+ax1.set_ylabel(r"$Q$/$P$ [-]")
 ax1.set_xlim([0.1, 10])
 ax1.set_xscale('log')
 ax1.set_ylim([-0.2, 1.2])
 # Common elements for both subplots
-ax1.plot([0, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
-ax1.plot([1, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
+ax1.plot([0, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
+ax1.plot([1, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
 x = np.logspace(-1, 0, 100)
-y = x
+y = 1-x
 ax1.plot(x, y, color='grey', linestyle='--', linewidth=1)
 P_vec = np.linspace(0.01, 10, 100)
 E0_vec = np.linspace(10, 0.01, 100)
 Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, 2.5)
-ax1.plot(E0_vec/P_vec, 1-Q_vec/P_vec, color='black', linestyle='--', linewidth=2, label="n = 2.5")
+ax1.plot(E0_vec/P_vec, Q_vec/P_vec, color='black', linestyle='--', linewidth=2, label="n = 2.5")
 Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, 2)
-ax1.plot(E0_vec/P_vec, 1-Q_vec/P_vec, color='black', linestyle=':', linewidth=2, label="n = 2")
+ax1.plot(E0_vec/P_vec, Q_vec/P_vec, color='black', linestyle=':', linewidth=2, label="n = 2")
 #cbar = fig.colorbar(im1, ax=[ax1], label=' [-]', aspect=30)
 ax1.set_xlabel(r"$E_p$/$P$ [-]")
 plt.legend()
 plt.savefig(figures_path + 'budyko_plot.png', dpi=600)
+
+# fit n value
+#df.loc[(df["country"] == 5) & (df["P_seasonality_index"] > 0), "country"] = 6
+
+P = df["mean_P"]
+PET = df["mean_PET"]
+Q = df["mean_Q"]
+def objective_function(n):
+    Q_calc = util_Turc.calculate_streamflow(P, PET, n)
+    return (abs(Q_calc - Q)).sum()
+from scipy.optimize import minimize_scalar
+res = minimize_scalar(objective_function, bounds=(0.1, 10), method='bounded')
+print("Average Turc-Pike n: ", np.round(res.x, 2))
+# fit Turc-Pike parameter n to each country and plot it
+countries = df["country"].unique()
+n_values = []
+for country in countries:
+    df_country = df[df["country"] == country]
+    P = df_country["mean_P"]
+    PET = df_country["mean_PET"]
+    Q = df_country["mean_Q"]
+    def objective_function(n):
+        Q_calc = util_Turc.calculate_streamflow(P, PET, n)
+        return (abs(Q_calc - Q)).sum()
+    from scipy.optimize import minimize_scalar
+    res = minimize_scalar(objective_function, bounds=(0.1, 10), method='bounded')
+    n_values.append(res.x)
+    print("Average Turc-Pike n for country ", country, ": ", np.round(res.x, 2))
+
+#
+df_s = df.copy()
+df_s = df_s.sort_values(by=["cor_PET_P"])
+n_pos = np.sum(df_s["cor_PET_P"] > 0)
+
+# Budyko plot with fitted n per country
+country_codes = sorted(set(df["country"]))  # e.g. [2,3,4,5]
+n_countries = len(country_codes)
+colors = plt.cm.magma(np.linspace(0, 1, n_countries+1))
+country_colors = dict(zip(country_codes, colors))
+
+# Scatter with consistent country colors
+fig, (ax1) = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in country_codes:
+    mask = df["country"] == country
+    color = country_colors[country]
+    ax1.scatter(df.loc[mask, "aridity_control"],
+                df.loc[mask, "mean_Q"]/df.loc[mask, "mean_P"],
+                s=5, alpha=0.8, c=[color]) #, label=f"Country {country}"
+# Common Budyko elements
+ax1.set_ylabel(r"$Q$/$P$ [-]")
+ax1.set_xlim([0.1, 10])
+ax1.set_xscale('log')
+ax1.set_ylim([-0.2, 1.2])
+ax1.plot([0, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
+ax1.plot([1, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
+x = np.logspace(-1, 0, 100)
+y = 1-x
+ax1.plot(x, y, color='grey', linestyle='--', linewidth=1)
+# Plot fitted Turc curves using optimized n values
+P_vec = np.linspace(0.01, 10, 100)
+E0_vec = np.linspace(10, 0.01, 100)
+country_idx = {country: i for i, country in enumerate(country_codes)}
+for i, country in enumerate(country_codes):
+    n_country = n_values[country_idx[country]]  # Use optimized n
+    Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, n_country)
+    color = country_colors[country]
+    ax1.plot(E0_vec/P_vec, Q_vec/P_vec, linestyle='-', linewidth=2, color="white", alpha=1)
+    ax1.plot(E0_vec/P_vec, Q_vec/P_vec, linestyle='-', linewidth=1, color=color, label=f"n={n_country:.1f} (country {country})", alpha=1)
+ax1.set_xlabel(r"$E_p$/$P$ [-]")
+#ax1.legend()#loc='lower right')
+plt.savefig(figures_path + 'budyko_plot_fitted_n_per_country.png', dpi=600, bbox_inches='tight')
+
+# Budyko plot with 1 country per subpanel (2x2 grid)
+country_codes = sorted(set(df["country"]))  # Assumes exactly 4 countries
+colors = plt.cm.magma(np.linspace(0, 1, len(country_codes) + 1))
+country_colors = dict(zip(country_codes, colors))
+fig, axs = plt.subplots(2, 2, figsize=(8, 5), constrained_layout=True, sharex=True, sharey=True)
+axs = axs.ravel()
+# Common Budyko elements for all panels
+P_vec = np.linspace(0.01, 10, 100)
+E0_vec = np.linspace(10, 0.01, 100)
+x = np.logspace(-1, 0, 100)
+y = 1 - x
+for i, country in enumerate(country_codes):
+    ax = axs[i]
+    # Scatter only THIS country
+    mask = df["country"] == country
+    color = country_colors[country]
+    ax.scatter(df.loc[mask, "aridity_control"],
+               df.loc[mask, "mean_Q"] / df.loc[mask, "mean_P"],
+               s=5, alpha=0.8, c=[color], label=f"Country {country}")
+    # Budyko reference lines
+    ax.set_xlim([0.1, 10])
+    ax.set_xscale('log')
+    ax.set_ylim([-0.2, 1.2])
+    ax.plot([0, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
+    ax.plot([1, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
+    ax.plot(x, y, color='grey', linestyle='--', linewidth=1)
+    # Fitted Turc curve for THIS country only
+    country_idx = {c: j for j, c in enumerate(country_codes)}
+    n_country = n_values[country_idx[country]]
+    Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, n_country)
+    ax.plot(E0_vec / P_vec, Q_vec / P_vec, linestyle='-', linewidth=2,
+            color="white", alpha=1)
+    ax.plot(E0_vec / P_vec, Q_vec / P_vec, linestyle='-', linewidth=2,
+            color=color, label=f"n={n_country:.1f}")
+    #ax.legend()
+# Outer labels
+for ax in axs[2:]:
+    ax.set_xlabel(r"$E_p$/$P$ [-]")
+for ax in axs[::2]:
+    ax.set_ylabel(r"$Q$/$P$ [-]")
+plt.savefig(figures_path + 'budyko_plot_one_country_per_panel.png', dpi=600, bbox_inches='tight')
+
+# plot sensitivity as function of aridity and compare to theoretical sensitivity
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5, 5), sharex=True, sharey=False)
+ax = ax1
+for country in country_codes:
+    mask = df["country"] == country
+    color = country_colors[country]
+    ax.scatter(df.loc[mask, "aridity_control"],
+                df.loc[mask, "sens_P_mr1"],
+                s=5, alpha=0.8, c=[color]) #, label=f"Country {country}"
+P_vec = np.linspace(0.01, 10, 100)
+E0_vec = np.linspace(10, 0.01, 100)
+dQdP, dQdE0 = util_Turc.calculate_sensitivities(P_vec, E0_vec, n)
+ax.plot(E0_vec/P_vec, dQdP, color='white', linestyle='-', linewidth=3, label="dQ/dP (theory)")
+ax.plot(E0_vec/P_vec, dQdP, color='grey', linestyle='-', linewidth=2, label="dQ/dP (theory)")
+ax.axhline(0, color='grey', linestyle='--', linewidth=1)
+ax.set_ylabel(r"$s_P$ [-]")
+ax.set_xscale('log')
+ax.set_xlim([0.1, 10])
+ax.set_ylim([-0.5, 1.5])
+ax = ax2
+for country in country_codes:
+    mask = df["country"] == country
+    color = country_colors[country]
+    ax.scatter(df.loc[mask, "aridity_control"],
+                df.loc[mask, "sens_PET_mr1"],
+                s=5, alpha=0.8, c=[color]) #, label=f"Country {country}"ax.plot(E0_vec/P_vec, dQdE0, color='white', linestyle='-', linewidth=3, label="dQ/dPET (theory)")
+ax.plot(E0_vec/P_vec, dQdE0, color='grey', linestyle='-', linewidth=2, label="dQ/dPET (theory)")
+ax.axhline(0, color='grey', linestyle='--', linewidth=1)
+ax.set_xlabel(r"$E_p$/$P$ [-]")
+ax.set_ylabel(r"$s_{Ep}$ [-]")
+ax.set_xscale('log')
+ax.set_xlim([0.1, 10])
+ax.xaxis.set_major_formatter(ticker.FuncFormatter(fmt_func))
+ax.set_ylim([-1.5, 0.5])
+fig.tight_layout()
+plt.savefig(figures_path + 'sensitivity_aridity_per_country.png', dpi=600)
 
 # histogram of cov_P_PET
 fig, ax = plt.subplots(figsize=(5, 3))
@@ -151,9 +301,12 @@ print("Average Spearman correlation between annual P and annual PET: ", np.round
 
 # extract catchments with ids = [73011, 'A2390531', 'DE810570', 2109]
 ids = ['camels_02027000', 'camelsgb_73005', 'camelsde_DE911260', 'camelsaus_616216']
+ids = df["gauge_id"]
 for id in ids:
     highlight = df[df["gauge_id"] == id]
+    print(highlight[["gauge_name"]].round(2))
     print(highlight[["gauge_id", "cv_P", "cv_PET", "cv_Q"]].round(2))
+    print(highlight[["gauge_id_native", "aridity_control", "sens_P_mr1", "sens_PET_mr1", "cor_PET_P"]].round(2))
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.5, 3))
     ax = ax1
     ax.scatter(highlight["annual_P"].values[0]*365, highlight["annual_Q"].values[0]*365, s=25, c="tab:blue", alpha=0.8, lw=0)
@@ -164,14 +317,14 @@ for id in ids:
     ax.set_xlabel(r"$E_p$ [mm/y]")
     ax.set_ylabel(r"$Q$ [mm/y]")
     plt.tight_layout()
-    plt.savefig(figures_path + 'P_PET_vs_Q_' + id + '.png', dpi=600)
+    plt.savefig(figures_path + 'example_plots_P_PET_Q/P_PET_vs_Q_' + id + '.png', dpi=600)
     plt.close()
 
 # comparison between averaging and non-averaging methods
 # compare methods
-fig = plt.figure(figsize=(3, 3), constrained_layout=True)
+fig = plt.figure(figsize=(3.5, 3), constrained_layout=True)
 axes = plt.axes()
-im = axes.scatter(df["sens_P_mr1"], df["sens_P_avg_mr1"], s=5, c="tab:blue", alpha=0.8, lw=0, vmin=-0.5, vmax=0.0, cmap='magma')
+im = axes.scatter(df["sens_P_mr1"], df["sens_P_avg_mr1"], s=10, c='tab:blue', alpha=0.8, lw=0)
 axes.set_xlabel(r"$s_P$ Mult. Reg. #1 [-]")
 axes.set_ylabel(r"$s_P$ Mult. Reg. #1 5y average [-]")
 axes.set_xlim([-0.1, 1.4])
@@ -183,9 +336,9 @@ cor_P = df["sens_P_mr1"].corr(df["sens_P_avg_mr1"], method='spearman')
 print("Correlation between dQ/dP #1 and dQ/dP #1 5y average: ", np.round(cor_P, 2))
 
 # compare methods
-fig = plt.figure(figsize=(3, 3), constrained_layout=True)
+fig = plt.figure(figsize=(3.5, 3), constrained_layout=True)
 axes = plt.axes()
-im = axes.scatter(df["sens_PET_mr1"], df["sens_PET_avg_mr1"], s=5, c="tab:orange", alpha=0.8, lw=0, vmin=-0.5, vmax=0.0, cmap='magma') #c=df["cor_PET_P"]
+im = axes.scatter(df["sens_PET_mr1"], df["sens_PET_avg_mr1"], s=10, c='tab:orange', alpha=0.8, lw=0) #c=df["cor_PET_P"]
 axes.set_xlabel(r"$s_{Ep}$ Mult. Reg. #1 [-]")
 axes.set_ylabel(r"$s_P$ Mult. Reg. #1 5y average [-]")
 axes.set_xlim([-1.5, 1.])
@@ -200,29 +353,77 @@ print("Correlation between dQ/dPET #1 and dQ/dPET #1 5y average: ", np.round(cor
 # plot histograms of p values
 fig, ax = plt.subplots(1, 2, figsize=(8, 3), constrained_layout=True)
 ax[0].hist(df["pval_sens_P_mr1"], bins=np.linspace(0, 1, 100), alpha=0.7, color='tab:blue')
-ax[0].set_xlabel(r"$p$-value $dQ/dP$ Mult. Reg. #1 [-]")
+ax[0].set_xlabel(r"$p$-value $s_{P}$ Mult. Reg. #1 [-]")
 ax[0].set_ylabel("Count")
 ax[0].set_xlim([0, 1])
 ax[1].hist(df["pval_sens_PET_mr1"], bins=np.linspace(0, 1, 100), alpha=0.7, color='tab:orange')
-ax[1].set_xlabel(r"$p$-value $dQ/dPET$ Mult. Reg. #1 [-]")
+ax[1].set_xlabel(r"$p$-value $s_{Ep}$ Mult. Reg. #1 [-]")
 ax[1].set_ylabel("Count")
 ax[1].set_xlim([0, 1])
-plt.savefig(figures_path + 'p_value_histograms.png', dpi=600)
+plt.savefig(figures_path + 'p_value_histograms_mr1.png', dpi=600)
 print("Number of catchments with p-value < 0.05 for dQ/dP #1: ", np.sum(df["pval_sens_P_mr1"] < 0.05))
 print("Number of catchments with p-value < 0.05 for dQ/dPET #1: ", np.sum(df["pval_sens_PET_mr1"] < 0.05))
+
+# plot histograms of p values
+fig, ax = plt.subplots(1, 2, figsize=(8, 3), constrained_layout=True)
+ax[0].hist(df["pval_sens_P_mr2"], bins=np.linspace(0, 1, 100), alpha=0.7, color='tab:blue')
+ax[0].set_xlabel(r"$p$-value $s_{P}$ Mult. Reg. #2 [-]")
+ax[0].set_ylabel("Count")
+ax[0].set_xlim([0, 1])
+ax[1].hist(df["pval_sens_PET_mr2"], bins=np.linspace(0, 1, 100), alpha=0.7, color='tab:orange')
+ax[1].set_xlabel(r"$p$-value $s_{Ep}$ Mult. Reg. #2 [-]")
+ax[1].set_ylabel("Count")
+ax[1].set_xlim([0, 1])
+plt.savefig(figures_path + 'p_value_histograms_mr1.png', dpi=600)
 print("Number of catchments with p-value < 0.05 for dQ/dP #2: ", np.sum(df["pval_sens_P_mr2"] < 0.05))
 print("Number of catchments with p-value < 0.05 for dQ/dPET #2: ", np.sum(df["pval_sens_PET_mr2"] < 0.05))
+
+# plot p-value of #2 vs sensitivity of #1
+fig, ax = plt.subplots(1, 2, figsize=(8, 3), constrained_layout=True)
+ax[0].scatter(df["pval_sens_P_mr1"], df["sens_P_mr1"], s=10, c="tab:blue", alpha=0.8, lw=0)
+ax[0].set_xlabel(r"$p$-value $s_{P}$ Mult. Reg. #1 [-]")
+ax[0].set_ylabel(r"Sensitivity $s_{P}$ Mult. Reg. #1 [-]")
+ax[0].set_xlim([-0.2, 1.2])
+ax[0].set_ylim([-0.5, 1.5])
+ax[0].text(0.95, 0.95, f"p < 0.05: {np.round(np.sum(df['pval_sens_P_mr1'] < 0.05)/len(df)*100)} %",
+              fontsize=10, ha='right', va='top', transform=ax[0].transAxes)
+ax[1].scatter(df["pval_sens_PET_mr1"], df["sens_PET_mr1"], s=10, c="tab:orange", alpha=0.8, lw=0)
+ax[1].set_xlabel(r"$p$-value $s_{Ep}$ Mult. Reg. #1 [-]")
+ax[1].set_ylabel(r"Sensitivity $s_{Ep}$ Mult. Reg. #1 [-]")
+ax[1].set_xlim([-0.2, 1.2])
+ax[1].set_ylim([-1.5, 0.5])
+ax[1].text(0.95, 0.95, f"p < 0.05: {np.round(np.sum(df['pval_sens_PET_mr1'] < 0.05)/len(df)*100)} %",
+                fontsize=10, ha='right', va='top', transform=ax[1].transAxes)
+plt.savefig(figures_path + 'p_value_sensitivity_mr1.png', dpi=600)
+
+# plot p-value of #2 vs sensitivity of #2
+fig, ax = plt.subplots(1, 2, figsize=(8, 3), constrained_layout=True)
+ax[0].scatter(df["pval_sens_P_mr2"], df["sens_P_mr2"], s=10, c="tab:blue", alpha=0.8, lw=0)
+ax[0].set_xlabel(r"$p$-value $s_{P}$ Mult. Reg. #2 [-]")
+ax[0].set_ylabel(r"Sensitivity $s_{P}$ Mult. Reg. #2 [-]")
+ax[0].set_xlim([-0.2, 1.2])
+ax[0].set_ylim([-0.5, 1.5])
+ax[0].text(0.95, 0.95, f"p < 0.05: {np.round(np.sum(df['pval_sens_P_mr2'] < 0.05)/len(df)*100)} %",
+           fontsize=10, ha='right', va='top', transform=ax[0].transAxes)
+ax[1].scatter(df["pval_sens_PET_mr2"], df["sens_PET_mr2"], s=10, c="tab:orange", alpha=0.8, lw=0)
+ax[1].set_xlabel(r"$p$-value $s_{Ep}$ Mult. Reg. #2 [-]")
+ax[1].set_ylabel(r"Sensitivity $s_{Ep}$ Mult. Reg. #2 [-]")
+ax[1].set_xlim([-0.2, 1.2])
+ax[1].set_ylim([-3, 3])
+ax[1].text(0.95, 0.95, f"p < 0.05: {np.round(np.sum(df['pval_sens_PET_mr2'] < 0.05)/len(df)*100)} %",
+              fontsize=10, ha='right', va='top', transform=ax[1].transAxes)
+plt.savefig(figures_path + 'p_value_sensitivity_mr2.png', dpi=600)
 
 # plot p values vs R²
 fig, ax = plt.subplots(1, 2, figsize=(8, 3), constrained_layout=True)
 ax[0].scatter(df["pval_sens_P_mr1"], df["R2_mr1"], s=5, c="tab:blue", alpha=0.8, lw=0)
-ax[0].set_xlabel(r"$p$-value $dQ/dP$ Mult. Reg. #1 [-]")
+ax[0].set_xlabel(r"$p$-value $s_{P}$ Mult. Reg. #1 [-]")
 ax[0].set_ylabel(r"$R^2$ Mult. Reg. #1 [-]")
 # set x axis to log scale
 ax[0].set_xscale('log')
 ax[0].set_ylim([0, 1])
 ax[1].scatter(df["pval_sens_PET_mr1"], df["R2_mr1"], s=5, c="tab:orange", alpha=0.8, lw=0)
-ax[1].set_xlabel(r"$p$-value $dQ/dPET$ Mult. Reg. #1 [-]")
+ax[1].set_xlabel(r"$p$-value $s_{Ep}$ Mult. Reg. #1 [-]")
 ax[1].set_ylabel(r"$R^2$ Mult. Reg. #1 [-]")
 #ax[0].set_xlim([0, 0.1])
 ax[1].set_xscale('log')

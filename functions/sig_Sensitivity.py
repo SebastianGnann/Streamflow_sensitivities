@@ -6,7 +6,8 @@ import statsmodels.api as sm
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 import functions.util_Turc as util_Turc
-
+from functions.util_Seasonality import calculate_Knoben_seasonality_index
+from functions.util_Seasonality import calculate_Woods_seasonality_index
 
 def sig_Sensitivity(Q, t, P, PET, wateryear="A-SEP", plot_results=False, fit_intercept=False, use_delta=False):
     """
@@ -336,12 +337,12 @@ def sig_SensitivityBudyko(Q, t, P, PET, wateryear="A-SEP", plot_results=False, f
     return sens_P, sens_PET, R2, nr_years, VIF, corr, pval_P, pval_PET
 
 
-def sig_SensitivityOverTime(Q, t, P, PET, id=None, window_years=10, wateryear="A-SEP", plot_results=False, fit_intercept=False, use_delta=False):
+def sig_SensitivityOverTime(Q, t, P, PET, T, id=None, window_years=10, wateryear="A-SEP", plot_results=False, fit_intercept=False, use_delta=False):
     """
-    Calculate hydrologic metrics using moving water year windows with p-values (only for sensitivities).
+    Calculate hydrologic metrics using moving water year windows.
     """
 
-    df = pd.DataFrame({'t': t, 'Q': Q, 'P': P, 'PET': PET})
+    df = pd.DataFrame({'t': t, 'Q': Q, 'P': P, 'PET': PET, 'T': T})
     df['wateryear'] = df["t"].dt.to_period(wateryear)
     water_years = df['wateryear'].unique()
     results = []
@@ -355,6 +356,8 @@ def sig_SensitivityOverTime(Q, t, P, PET, id=None, window_years=10, wateryear="A
             'mean_PET': np.nan,
             'mean_Q': np.nan,
             'aridity': np.nan,
+            'P_seasonality_index': np.nan,
+            'seasonality_index': np.nan,
             'P_PET_correlation': np.nan,
             'sens_P': np.nan,
             'sens_PET': np.nan,
@@ -376,6 +379,8 @@ def sig_SensitivityOverTime(Q, t, P, PET, id=None, window_years=10, wateryear="A
             mean_PET = window_df['PET'].mean()
             mean_Q = window_df['Q'].mean()
             aridity = mean_PET / mean_P if mean_P != 0 else np.nan
+            seasonality_index = calculate_Knoben_seasonality_index(window_df['P'], window_df['PET'], window_df['t'])
+            P_seasonality_index = calculate_Woods_seasonality_index(window_df['P'], window_df['T'], window_df['t'])
 
             sens_P, sens_PET, R2, nr_years, VIF, corr, pval_P, pval_PET = sig_Sensitivity(
                 window_df["Q"].values, window_df["t"].values,
@@ -389,6 +394,8 @@ def sig_SensitivityOverTime(Q, t, P, PET, id=None, window_years=10, wateryear="A
                 'mean_PET': mean_PET,
                 'mean_Q': mean_Q,
                 'aridity': aridity,
+                'P_seasonality_index': P_seasonality_index,
+                'seasonality_index': seasonality_index,
                 'P_PET_correlation': corr,
                 'sens_P': sens_P,
                 'sens_PET': sens_PET,
