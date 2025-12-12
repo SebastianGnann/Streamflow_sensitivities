@@ -55,7 +55,7 @@ df = df[df["mean_P"] > df["mean_Q"]]
 # remove catch
 df = df.reset_index()
 
-n = 2.5 # Turc-Pike parameter
+n = 2.2 # Turc-Pike parameter
 
 # plot histogram with country
 fig, ax = plt.subplots(figsize=(4, 3))

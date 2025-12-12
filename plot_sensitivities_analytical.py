@@ -35,7 +35,7 @@ def calculate_relative_error(estimated, theoretical):
 
 def plot_sensitivities(n=2):
 
-    nr_samples = 10
+    nr_samples = 100
     p_means = np.linspace(300, 3000, nr_samples)
     pet_means = np.linspace(300, 3000, nr_samples)
     correlations = [-0.5, 0.0, 0.5]
@@ -86,6 +86,8 @@ def plot_sensitivities(n=2):
                 "Mult. Reg. Log",
                 # ODR methods removed
             ]
+            # todo: add lasso/ridge and averaging in an alternative code
+
             relative_errors_P = {m: [] for m in methods}
             relative_errors_PET = {m: [] for m in methods}
 
@@ -173,6 +175,28 @@ def plot_sensitivities(n=2):
                     ss_res = ((np.exp(log_y) - np.exp(y_pred)) ** 2).sum()
                     ss_tot = ((np.exp(log_y) - np.exp(log_y).mean()) ** 2).sum()
                     r2_P_method5 = 1 - ss_res / ss_tot
+
+                    '''
+                    # Method 5 alternative: regression using averaging
+                    n_years = 5
+                    df_block = df_art.copy()
+                    n_blocks = len(df_block) // n_years
+                    df_block = df_block.iloc[:n_blocks * n_years]
+                    df_block['block'] = np.repeat(np.arange(n_blocks), n_years)
+                    averaged_data = df_block.groupby('block')[['Q', 'P', 'PET']].mean()
+                    X_centered = (averaged_data[["P", "PET"]] - averaged_data[["P", "PET"]].mean()).values
+                    y_centered = (averaged_data["Q"] - averaged_data["Q"].mean()).values
+                    model_multi_centered = sm.OLS(y_centered, X_centered).fit()
+                    sens_P_method5 = model_multi_centered.params[0]
+                    sens_PET_method5 = model_multi_centered.params[1]
+                    p_value_P_method5 = model_multi_centered.pvalues[0]
+                    p_value_PET_metho5 = model_multi_centered.pvalues[1]
+                    #r2_P_method5 = model_multi_centered.rsquared
+                    y_pred = model_multi_centered.predict(X_centered)
+                    ss_res = ((y_centered - y_pred) ** 2).sum()
+                    ss_tot = ((y_centered - y_centered.mean()) ** 2).sum()
+                    r2_P_method5 = 1 - ss_res / ss_tot
+                    '''
 
                     results.extend([
                         {"aridity_index": aridity_index,
@@ -406,7 +430,7 @@ def plot_sensitivities(n=2):
     fig_bar_r2.savefig(figures_path + "theoretical_sensitivities_bar_r2_" + str(n) +".png", dpi=600, bbox_inches='tight')
 
 # Run plotting and save Turc curves plot
-n = 2.5
+n = 2.2
 util_Turc.plot_Turc_curves(n)
 fig = plt.gcf()
 fig.savefig("figures/Turc_curve_" + str(n) + ".png", dpi=600, bbox_inches='tight')

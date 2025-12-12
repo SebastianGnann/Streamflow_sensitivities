@@ -54,10 +54,10 @@ df = df[df["frac_snow_control"] < 0.2]
 df = df[df["mean_P"] > df["mean_Q"]]
 df = df.reset_index()
 
-n = 2.4 # 1.74 # 2.6 # 1.86 # Turc-Pike parameter
+n = 1.9#2.6#1.74 # 2.6 # 1.86 # Turc-Pike parameter
 
 # choose either Germany or Australia
-country_nr = 2# 4 for Germany, 5 for Australia
+country_nr = 4# 4 for Germany, 5 for Australia
 df = df[df["country"] == country_nr]
 #df = df[df["seasonality_index"] > 1.4]
 #df = df[df["P_seasonality_index"] < 0]

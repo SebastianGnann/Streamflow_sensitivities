@@ -246,6 +246,7 @@ def calculate_metrics(df_tmp, id, gauge_id, wy):
         sens_P_avg_mr2, sens_PET_avg_mr2, R2_avg_mr2, _, _, _, pval_sens_P_avg_mr2, pval_sens_PET_avg_mr2 = sig_SensitivityAveraging(
             df_tmp["Q"].values, df_tmp["date"].values, df_tmp["P"].values,
             df_tmp["PET"].values, use_delta=True, fit_intercept=True, wateryear=wy_str, n=5)
+        # todo: add lasso/ridge regression?
 
         # calculate sensitivities over time
         df_time_mr1 = sig_SensitivityOverTime(

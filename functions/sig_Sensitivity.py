@@ -8,6 +8,8 @@ from statsmodels.tools.tools import add_constant
 import functions.util_Turc as util_Turc
 from functions.util_Seasonality import calculate_Knoben_seasonality_index
 from functions.util_Seasonality import calculate_Woods_seasonality_index
+import functions.util_SnowModel as util_SnowModel
+from functions.sig_BFI import sig_BFI
 
 def sig_Sensitivity(Q, t, P, PET, wateryear="A-SEP", plot_results=False, fit_intercept=False, use_delta=False):
     """
@@ -358,6 +360,8 @@ def sig_SensitivityOverTime(Q, t, P, PET, T, id=None, window_years=10, wateryear
             'aridity': np.nan,
             'P_seasonality_index': np.nan,
             'seasonality_index': np.nan,
+            'frac_snow_control': np.nan,
+            'BFI': np.nan,
             'P_PET_correlation': np.nan,
             'sens_P': np.nan,
             'sens_PET': np.nan,
@@ -379,8 +383,15 @@ def sig_SensitivityOverTime(Q, t, P, PET, T, id=None, window_years=10, wateryear
             mean_PET = window_df['PET'].mean()
             mean_Q = window_df['Q'].mean()
             aridity = mean_PET / mean_P if mean_P != 0 else np.nan
+
             seasonality_index = calculate_Knoben_seasonality_index(window_df['P'], window_df['PET'], window_df['t'])
             P_seasonality_index = calculate_Woods_seasonality_index(window_df['P'], window_df['T'], window_df['t'])
+
+            df_snow = util_SnowModel.calculate_swe(window_df['P'], window_df['t'], window_df['T'], plot_results=False)
+            frac_snow_control = np.nanmean(df_snow["melt"]) / np.nanmean(window_df['P'])
+
+            BFI = sig_BFI(window_df['Q'].values, window_df['t'].values)
+            BFI = BFI[0]
 
             sens_P, sens_PET, R2, nr_years, VIF, corr, pval_P, pval_PET = sig_Sensitivity(
                 window_df["Q"].values, window_df["t"].values,
@@ -396,6 +407,8 @@ def sig_SensitivityOverTime(Q, t, P, PET, T, id=None, window_years=10, wateryear
                 'aridity': aridity,
                 'P_seasonality_index': P_seasonality_index,
                 'seasonality_index': seasonality_index,
+                'frac_snow_control': frac_snow_control,
+                'BFI': BFI,
                 'P_PET_correlation': corr,
                 'sens_P': sens_P,
                 'sens_PET': sens_PET,

@@ -95,13 +95,13 @@ y = 1-x
 ax1.plot(x, y, color='grey', linestyle='--', linewidth=1)
 P_vec = np.linspace(0.01, 10, 100)
 E0_vec = np.linspace(10, 0.01, 100)
-Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, 2.5)
-ax1.plot(E0_vec/P_vec, Q_vec/P_vec, color='black', linestyle='--', linewidth=2, label="n = 2.5")
+Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, 2.2)
+ax1.plot(E0_vec/P_vec, Q_vec/P_vec, color='black', linestyle='-', linewidth=2, label="n = 2.2")
 Q_vec = util_Turc.calculate_streamflow(P_vec, E0_vec, 2)
-ax1.plot(E0_vec/P_vec, Q_vec/P_vec, color='black', linestyle=':', linewidth=2, label="n = 2")
+#ax1.plot(E0_vec/P_vec, Q_vec/P_vec, color='black', linestyle=':', linewidth=2, label="n = 2")
 #cbar = fig.colorbar(im1, ax=[ax1], label=' [-]', aspect=30)
 ax1.set_xlabel(r"$E_p$/$P$ [-]")
-plt.legend()
+#plt.legend()
 plt.savefig(figures_path + 'budyko_plot.png', dpi=600)
 
 # fit n value
@@ -301,7 +301,7 @@ print("Average Spearman correlation between annual P and annual PET: ", np.round
 
 # extract catchments with ids = [73011, 'A2390531', 'DE810570', 2109]
 ids = ['camels_02027000', 'camelsgb_73005', 'camelsde_DE911260', 'camelsaus_616216']
-ids = df["gauge_id"]
+#ids = df["gauge_id"]
 for id in ids:
     highlight = df[df["gauge_id"] == id]
     print(highlight[["gauge_name"]].round(2))
@@ -340,7 +340,7 @@ fig = plt.figure(figsize=(3.5, 3), constrained_layout=True)
 axes = plt.axes()
 im = axes.scatter(df["sens_PET_mr1"], df["sens_PET_avg_mr1"], s=10, c='tab:orange', alpha=0.8, lw=0) #c=df["cor_PET_P"]
 axes.set_xlabel(r"$s_{Ep}$ Mult. Reg. #1 [-]")
-axes.set_ylabel(r"$s_P$ Mult. Reg. #1 5y average [-]")
+axes.set_ylabel(r"$s_{Ep}$ Mult. Reg. #1 5y average [-]")
 axes.set_xlim([-1.5, 1.])
 axes.set_ylim([-1.5, 1.])
 axes.plot([-2, 3], [-2, 3], color='grey', linestyle='--', linewidth=1)
@@ -633,17 +633,17 @@ df_CAMELS_AUS_SILO = pd.merge(df_CAMELS_AUS_SILO , df_humans, on='gauge_id_nativ
 df_CAMELS_AUS_SILO = df_CAMELS_AUS_SILO [df_CAMELS_AUS_SILO ["river_di"]<0.2]
 
 # compare CAMELS_DE and CAMELS_DE_Caravan P and PET sensitivities with two scatter plots
-fig, ax = plt.subplots(1, 2, figsize=(9, 4))
+fig, ax = plt.subplots(1, 2, figsize=(7, 3))
 ax[0].scatter(df_CAMELS_DE["sens_P_mr1"], df_CAMELS_DE_Caravan["sens_P_mr1"], s=10, alpha=0.5, label='P sensitivity')
 ax[0].plot([-0.3, 1.3], [-0.3, 1.3], color='grey', linestyle='--')
 ax[1].scatter(df_CAMELS_DE["sens_PET_mr1"], df_CAMELS_DE_Caravan["sens_PET_mr1"], s=10, alpha=0.5, label='PET sensitivity')
 ax[1].plot([-1.2, 0.6], [-1.2, 0.6], color='grey', linestyle='--')
-ax[0].set_xlabel('CAMELS_DE P sensitivity')
-ax[0].set_ylabel('CAMELS_DE_Caravan P sensitivity')
+ax[0].set_xlabel(r'$s_{P}$ using CAMELS DE data')
+ax[0].set_ylabel(r'$s_{P}$ using CAMELS DE Caravan data')
 #ax[0].set_xlim([-0.25, 1.25])
 #ax[0].set_ylim([-0.25, 1.25])
-ax[1].set_xlabel('CAMELS_DE PET sensitivity')
-ax[1].set_ylabel('CAMELS_DE_Caravan PET sensitivity')
+ax[1].set_xlabel(r'$s_{Ep}$ using CAMELS DE data')
+ax[1].set_ylabel(r'$s_{Ep}$ using CAMELS DE Caravan data')
 #ax[1].set_xlim([-1., 0.5])
 #ax[1].set_ylim([-1., 0.5])
 plt.tight_layout()
@@ -655,15 +655,15 @@ mean_error_PET = np.mean(np.abs(df_CAMELS_DE_Caravan["sens_PET_mr1"] - df_CAMELS
 print("Mean error P sensitivity:", np.round(mean_error_P, 2))
 print("Mean error PET sensitivity:", np.round(mean_error_PET, 2))
 
-fig, ax = plt.subplots(1, 2, figsize=(9, 4))
+fig, ax = plt.subplots(1, 2, figsize=(7, 3))
 ax[0].scatter(df_CAMELS_DE["mean_P"], df_CAMELS_DE_Caravan["mean_P"], s=10, alpha=0.5, label='P sensitivity')
 ax[0].plot([1, 5], [1, 5], color='grey', linestyle='--')
 ax[1].scatter(df_CAMELS_DE["mean_PET"], df_CAMELS_DE_Caravan["mean_PET"], s=10, alpha=0.5, label='PET sensitivity')
 ax[1].plot([1, 2.5], [1, 2.5], color='grey', linestyle='--')
-ax[0].set_xlabel('CAMELS_DE P')
-ax[0].set_ylabel('CAMELS_DE_Caravan P')
-ax[1].set_xlabel('CAMELS_DE PET')
-ax[1].set_ylabel('CAMELS_DE_Caravan PET')
+ax[0].set_xlabel(r'$P$ CAMELS DE data')
+ax[0].set_ylabel(r'$P$ CAMELS DE Caravan data')
+ax[1].set_xlabel(r'${E_p}$ CAMELS DE data')
+ax[1].set_ylabel(r'${E_p}$ CAMELS DE Caravan data')
 plt.tight_layout()
 plt.show()
 print("Correlation P :", df_CAMELS_DE_Caravan["mean_P"].corr(df_CAMELS_DE["mean_P"], method='spearman'))
@@ -674,17 +674,17 @@ print("Mean error P:", np.round(mean_error_P, 2))
 print("Mean error PET:", np.round(mean_error_PET, 2))
 
 # compare CAMELS_AUS and CAMELS_AUS_SILO P and PET sensitivities with two scatter plots
-fig, ax = plt.subplots(1, 2, figsize=(9, 4))
+fig, ax = plt.subplots(1, 2, figsize=(7, 3))
 ax[0].scatter(df_CAMELS_AUS["sens_P_mr1"], df_CAMELS_AUS_SILO["sens_P_mr1"], s=10, alpha=0.5, label='P sensitivity')
 ax[0].plot([-0.2, 1.2], [-0.2, 1.2], color='grey', linestyle='--')
 ax[1].scatter(df_CAMELS_AUS["sens_PET_mr1"], df_CAMELS_AUS_SILO["sens_PET_mr1"], s=10, alpha=0.5, label='PET sensitivity')
 ax[1].plot([-1.2, 0.2], [-1.2, 0.2], color='grey', linestyle='--')
-ax[0].set_xlabel('CAMELS_AUS P sensitivity')
-ax[0].set_ylabel('CAMELS_AUS_SILO P sensitivity')
+ax[0].set_xlabel(r'$s_{P}$ using CAMELS AUS data')
+ax[0].set_ylabel(r'$s_{P}$ using CAMELS AUS SILO data')
 #ax[0].set_xlim([-0.2, 1.2])
 #ax[0].set_ylim([-0.2, 1.2])
-ax[1].set_xlabel('CAMELS_AUS PET sensitivity')
-ax[1].set_ylabel('CAMELS_AUS_SILO PET sensitivity')
+ax[1].set_xlabel(r'$s_{Ep}$ using CAMELS AUS data')
+ax[1].set_ylabel(r'$s_{Ep}$ using CAMELS AUS SILO data')
 #ax[1].set_xlim([-1.2, 0.2])
 #ax[1].set_ylim([-1.2, 0.2])
 plt.tight_layout()

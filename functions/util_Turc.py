@@ -37,8 +37,8 @@ def plot_Turc_curves(n=2):
     #axes[0].plot(aridity, dQdA_vec/P_vec, color='tab:grey', linewidth=2, label='d(Q/P)/dA')
     #axes[0].plot(aridity, np.gradient(Q_vec, aridity)/P_vec, '--', color='darkgrey', linewidth=2, label='d(Q/P)/dA')
     axes[0].set_ylabel(r"$Q$/$P$ [-]")
-    axes[0].plot([0, 20], [1, 1], color='grey', linestyle='--', linewidth=1)
-    axes[0].plot([1, 20], [0, 0], color='grey', linestyle='-', linewidth=1)
+    axes[0].plot([0, 20], [1, 1], color='grey', linestyle='-', linewidth=1)
+    axes[0].plot([0, 20], [0, 0], color='grey', linestyle='--', linewidth=1)
     x = np.logspace(-1, 0, 100)
     y = 1-x
     axes[0].plot(x, y, color='grey', linestyle='-', linewidth=1)
