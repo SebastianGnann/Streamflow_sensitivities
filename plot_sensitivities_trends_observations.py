@@ -49,12 +49,11 @@ df = pd.concat([df_CAMELS_US, df_CAMELS_GB, df_CAMELS_DE, df_CAMELS_AUS], ignore
 # filter catchments
 df = df[df["perc_complete"] > 0.95]
 df = df[df["len_years"] > 50]
-df = df[df["len_years"] > 50]
 df = df[df["frac_snow_control"] < 0.2]
 df = df[df["mean_P"] > df["mean_Q"]]
 df = df.reset_index()
 
-n = 1.7 #
+n = 2.6 #
 # DE = 1.9
 # AUS = 2.2
 # AUS winter = 2.6
@@ -63,7 +62,7 @@ n = 1.7 #
 # choose either Germany or Australia
 country_nr = 5# 4 for Germany, 5 for Australia
 df = df[df["country"] == country_nr]
-df = df[df["P_seasonality_index"] > 0]
+df = df[df["P_seasonality_index"] < 0]
 
 # transform data
 df["start_wateryear"] = df["start_wateryear"].apply(lambda x: np.array([float(y) for y in re.findall(r"\d{4}", x)]))

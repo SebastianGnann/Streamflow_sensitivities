@@ -687,10 +687,12 @@ ax.legend(title="Country", labels=['USA', 'GB', 'DE', 'AUS'])
 plt.savefig(figures_path + 'bfi_histogram_countries.png', dpi=600)
 
 # just for the three subsets for trend analysis
-colors = plt.cm.magma(np.linspace(0.5, 1, 3))
+colors = plt.cm.magma(np.linspace(0.5, 1, 4))
 country_colors = dict(zip([4,5,6], colors))
+
 df_filtered = df.copy()
-df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
+df_filtered = df_filtered[df_filtered["len_years"] > 50]
+#df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
 fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
 for country in [4,5,6]:
     mask = df_filtered["country"] == country
@@ -705,34 +707,30 @@ for country in [4,5,6]:
     ax.set_xlabel(r"BFI [-]")
 ax.set_ylabel(r"Density [-]")
 ax.set_xlim([0, 1])
-ax.legend(title="Country", labels=['DE', 'AUS $P_S$<0', 'AUS $P_S$>0'])
+ax.legend(title="Country", labels=['DE', 'AUS $P_S$>0', 'AUS $P_S$<0'])
 plt.savefig(figures_path + 'bfi_kde_countries_filtered.png', dpi=600)
 
-colors = plt.cm.magma(np.linspace(0.5, 1, 3))
-country_colors = dict(zip([4,5,6], colors))
 df_filtered = df.copy()
-df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
+df_filtered = df_filtered[df_filtered["len_years"] > 50]
 fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
 for country in [4,5,6]:
     mask = df_filtered["country"] == country
     data = df_filtered.loc[mask, "P_seasonality_index"].values
     color = country_colors[country]
     kde = gaussian_kde(data)
-    x = np.linspace(-1, 1, 500)
+    x = np.linspace(-1.5, 1.5, 500)
     y = kde(x)
     #scale_factor = len(data)   # Adjust to visually match histogram density
     #ax.plot(x, y, color=color, linewidth=2, label=country)
     ax.fill_between(x, 0, y, color=color, alpha=0.5)
     ax.set_xlabel(r"$P_S$ [-]")
 ax.set_ylabel(r"Density [-]")
-ax.set_xlim([-1, 1])
-ax.legend(title="Country", labels=['DE', 'AUS $P_S$<0', 'AUS $P_S$>0'])
+ax.set_xlim([-1.5, 1.5])
+ax.legend(title="Country", labels=['DE', 'AUS $P_S$>0', 'AUS $P_S$<0'])
 plt.savefig(figures_path + 'Ps_kde_countries_filtered.png', dpi=600)
 
-colors = plt.cm.magma(np.linspace(0.5, 1, 3))
-country_colors = dict(zip([4,5,6], colors))
 df_filtered = df.copy()
-df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
+df_filtered = df_filtered[df_filtered["len_years"] > 50]
 fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
 for country in [4,5,6]:
     mask = df_filtered["country"] == country
@@ -747,5 +745,5 @@ for country in [4,5,6]:
     ax.set_xlabel(r"$f_S$ [-]")
 ax.set_ylabel(r"Density [-]")
 ax.set_xlim([0, 1])
-ax.legend(title="Country", labels=['DE', 'AUS $P_S$<0', 'AUS $P_S$>0'])
+ax.legend(title="Country", labels=['DE', 'AUS $P_S$>0', 'AUS $P_S$<0'])
 plt.savefig(figures_path + 'fs_kde_countries_filtered.png', dpi=600)
