@@ -42,15 +42,18 @@ for id in df_attr["gauge_id"]:
 
     df_tmp = pd.read_csv(data_path + "CAMELS_DE/timeseries/CAMELS_DE_hydromet_timeseries_" + str(id) + ".csv", sep=',')
     df_tmp["date"] = pd.to_datetime(df_tmp["date"])
-    df_sim = pd.read_csv(data_path + "CAMELS_DE/timeseries_simulated/CAMELS_DE_discharge_sim_" + str(id) + ".csv", sep=',')
-    df_sim["date"] = pd.to_datetime(df_sim["date"])
-    df_tmp = pd.merge(df_tmp, df_sim[["date", "pet_hargreaves"]], on='date')
+    # could also load it directly from Caravan "streamflow"
+    df_caravan = pd.read_csv(data_path + "caravan_de/timeseries/csv/camelsde/camelsde_" + str(id) + ".csv", sep=',')
+    df_caravan["date"] = pd.to_datetime(df_caravan["date"])
+    df_tmp = pd.merge(df_tmp, df_caravan[["date", "total_precipitation_sum",
+                                          "potential_evaporation_sum_FAO_PENMAN_MONTEITH", "potential_evaporation_sum_ERA5_LAND",
+                                          "temperature_2m_mean"]], on='date')
 
     # rename variables
     df_tmp = df_tmp.rename(columns={"discharge_spec_obs": "Q",
-                                    "precipitation_mean": "P",
-                                    "pet_hargreaves": "PET",
-                                    "temperature_mean": "T"})
+                                    "total_precipitation_sum": "P",
+                                    "potential_evaporation_sum_FAO_PENMAN_MONTEITH": "PET",
+                                    "temperature_2m_mean": "T"})
 
     # calculate signatures
     wy = 10  # define water year
@@ -68,10 +71,10 @@ df = df.merge(df_attributes_caravan, on='gauge_id', how='left')
 df = df.merge(df_attributes_other, on='gauge_id', how='left')
 
 # save results
-df.to_csv(results_path + 'camels_DE_sensitivities.csv', index=False)
+df.to_csv(results_path + 'camels_DE_sensitivities_Caravan.csv', index=False)
 print("Finished saving data.")
 
-df = pd.read_csv(results_path + 'camels_DE_sensitivities.csv')
+df = pd.read_csv(results_path + 'camels_DE_sensitivities_Caravan.csv')
 
 # transform data
 import re

@@ -19,18 +19,38 @@ figures_path = "figures/"
 if not os.path.isdir(figures_path):
     os.makedirs(figures_path)
 
-df_topo = pd.read_csv(data_path + "CAMELS_DE/CAMELS_DE_topographic_attributes.csv",
-                      sep=',', skiprows=0, encoding='latin-1')
-df_climate = pd.read_csv(data_path + "CAMELS_DE/CAMELS_DE_climatic_attributes.csv",
+df_loc = pd.read_csv(
+    "D:/Data/CAMELS_AUS_v2/02_location_boundary_area/02_location_boundary_area/location_boundary_area.csv",
+    sep=',', skiprows=0, encoding='latin-1')
+df_climate = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/ClimaticIndices.csv",
                          sep=',', skiprows=0, encoding='latin-1')
-df_landcover = pd.read_csv(data_path + "CAMELS_DE/CAMELS_DE_landcover_attributes.csv",
-                           sep=',', skiprows=0, encoding='latin-1')
-df_humaninfluence = pd.read_csv(data_path + "CAMELS_DE/CAMELS_DE_humaninfluence_attributes.csv",
-                                sep=',', skiprows=0, encoding='latin-1')
+df_geology = pd.read_csv("D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_01_Geology&Soils.csv",
+                         sep=',', skiprows=0, encoding='latin-1')
+df_topo = pd.read_csv("D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_02_Topography&Geometry.csv",
+                      sep=',', skiprows=0, encoding='latin-1')
+df_landcover = pd.read_csv(
+    "D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_03_LandCover&Vegetation.csv",
+    sep=',', skiprows=0, encoding='latin-1')
+df_humans = pd.read_csv(
+    "D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_04_AnthropogenicInfluences.csv",
+    sep=',', skiprows=0, encoding='latin-1')
+df_other = pd.read_csv("D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_05_Other.csv",
+                       sep=',', skiprows=0, encoding='latin-1')
+df_hydro = pd.read_csv("D:/Data/CAMELS_AUS_v2/03_streamflow/03_streamflow/streamflow_signatures.csv",
+                       sep=',', skiprows=0, encoding='latin-1')
 
-df_attr = pd.merge(df_topo, df_climate, on='gauge_id')
-df_attr = pd.merge(df_attr, df_landcover, on='gauge_id')
-df_attr = pd.merge(df_attr, df_humaninfluence, on='gauge_id')
+df_climate.rename(columns={'ID': 'station_id'}, inplace=True)
+df_hydro.rename(columns={'ID': 'station_id'}, inplace=True)
+df_attr = pd.merge(df_loc, df_climate, on='station_id')
+df_attr = pd.merge(df_attr, df_geology, on='station_id')
+df_attr = pd.merge(df_attr, df_topo, on='station_id')
+df_attr = pd.merge(df_attr, df_landcover, on='station_id')
+df_attr = pd.merge(df_attr, df_humans, on='station_id')
+df_attr = pd.merge(df_attr, df_other, on='station_id')
+# rename "CatchID" in df_hydro to "station_id" to match
+df_hydro.rename(columns={'CatchID': 'station_id'}, inplace=True)
+df_attr = pd.merge(df_attr, df_hydro, on='station_id')
+df_attr.rename(columns={'station_id': 'gauge_id'}, inplace=True)
 
 # list to store all attributes
 result_lists = initialize_result_lists()
@@ -38,40 +58,42 @@ result_lists = initialize_result_lists()
 for id in df_attr["gauge_id"]:
     print(id)
 
-    gauge_id = f"camelsde_{id}"
+    gauge_id = f"camelsaus_{id}"
 
-    df_tmp = pd.read_csv(data_path + "CAMELS_DE/timeseries/CAMELS_DE_hydromet_timeseries_" + str(id) + ".csv", sep=',')
-    df_tmp["date"] = pd.to_datetime(df_tmp["date"])
-    df_sim = pd.read_csv(data_path + "CAMELS_DE/timeseries_simulated/CAMELS_DE_discharge_sim_" + str(id) + ".csv", sep=',')
-    df_sim["date"] = pd.to_datetime(df_sim["date"])
-    df_tmp = pd.merge(df_tmp, df_sim[["date", "pet_hargreaves"]], on='date')
+    df_caravan = pd.read_csv(data_path + "Caravan_May25/timeseries/csv/camelsaus/camelsaus_" + str(id) + ".csv", sep=',')
+    df_caravan["date"] = pd.to_datetime(df_caravan["date"])
+    df_tmp = df_caravan[["date", "total_precipitation_sum",
+                         "potential_evaporation_sum_FAO_PENMAN_MONTEITH",
+                         "potential_evaporation_sum_ERA5_LAND",
+                         "temperature_2m_mean",
+                         "streamflow"]]
 
     # rename variables
-    df_tmp = df_tmp.rename(columns={"discharge_spec_obs": "Q",
-                                    "precipitation_mean": "P",
-                                    "pet_hargreaves": "PET",
-                                    "temperature_mean": "T"})
+    df_tmp = df_tmp.rename(columns={"streamflow": "Q",
+                                    "total_precipitation_sum": "P",
+                                    "potential_evaporation_sum_FAO_PENMAN_MONTEITH": "PET",
+                                    "temperature_2m_mean": "T"})
 
     # calculate signatures
-    wy = 10  # define water year
+    wy = 7  # define water year
     gauge_results = calculate_metrics(df_tmp, id, gauge_id, wy)  # calculate all values
     append_results(result_lists, gauge_results)  # append all calculated values
 
 df = pd.DataFrame(result_lists)  # create final dataframe
 
 # load attributes from Caravan
-df_attributes_hydroatlas = pd.read_csv("D:/Data/caravan_de/attributes/camelsde/attributes_hydroatlas_camelsde.csv", sep=',')
-df_attributes_caravan = pd.read_csv("D:/Data/caravan_de/attributes/camelsde/attributes_caravan_camelsde.csv", sep=',')
-df_attributes_other = pd.read_csv("D:/Data/caravan_de/attributes/camelsde/attributes_other_camelsde.csv", sep=',')
+df_attributes_hydroatlas = pd.read_csv("D:/Data/Caravan_May25/attributes/camelsaus/attributes_hydroatlas_camelsaus.csv", sep=',')
+df_attributes_caravan = pd.read_csv("D:/Data/Caravan_May25/attributes/camelsaus/attributes_caravan_camelsaus.csv", sep=',')
+df_attributes_other = pd.read_csv("D:/Data/Caravan_May25/attributes/camelsaus/attributes_other_camelsaus.csv", sep=',')
 df = df.merge(df_attributes_hydroatlas, on='gauge_id', how='left')
 df = df.merge(df_attributes_caravan, on='gauge_id', how='left')
 df = df.merge(df_attributes_other, on='gauge_id', how='left')
 
 # save results
-df.to_csv(results_path + 'camels_DE_sensitivities.csv', index=False)
+df.to_csv(results_path + 'camels_AUS_sensitivities_Caravan.csv', index=False)
 print("Finished saving data.")
 
-df = pd.read_csv(results_path + 'camels_DE_sensitivities.csv')
+df = pd.read_csv(results_path + 'camels_AUS_sensitivities_Caravan.csv')
 
 # transform data
 import re

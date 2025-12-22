@@ -53,11 +53,8 @@ df_attr = pd.merge(df_attr, df_hydro, on='station_id')
 df_attr.rename(columns={'station_id': 'gauge_id'}, inplace=True)
 
 # read time series
-#df_P = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/01_precipitation_timeseries/precipitation_SILO.csv", sep=',')
 df_P = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/01_precipitation_timeseries/precipitation_AGCD.csv", sep=',')
 df_PET = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/02_EvaporativeDemand_timeseries/et_morton_wet_SILO.csv", sep=',')
-#df_Tmin = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/03_Other/SILO/tmin_SILO.csv", sep=',')
-#df_Tmax = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/03_Other/SILO/tmax_SILO.csv", sep=',')
 df_Tmin = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/03_Other/AGCD/tmin_AGCD.csv", sep=',')
 df_Tmax = pd.read_csv("D:/Data/CAMELS_AUS_v2/05_hydrometeorology/05_hydrometeorology/03_Other/AGCD/tmax_AGCD.csv", sep=',')
 df_Q = pd.read_csv("D:/Data/CAMELS_AUS_v2/03_streamflow/03_streamflow/streamflow_mmd.csv", sep=',')
@@ -104,11 +101,9 @@ df = df.merge(df_attributes_caravan, on='gauge_id', how='left')
 df = df.merge(df_attributes_other, on='gauge_id', how='left')
 
 # save results
-#df.to_csv(results_path + 'camels_AUS_sensitivities_SILO.csv', index=False)
 df.to_csv(results_path + 'camels_AUS_sensitivities.csv', index=False)
 print("Finished saving data.")
 
-#df = pd.read_csv(results_path + 'camels_AUS_sensitivities_SILO.csv')
 df = pd.read_csv(results_path + 'camels_AUS_sensitivities.csv')
 
 # transform data
@@ -155,7 +150,7 @@ m.drawcountries()
 m.fillcontinents(color='lightgrey', lake_color='white')
 m.drawmapboundary(fill_color='white')
 x, y = m(df["gauge_lon"].values, df["gauge_lat"].values)
-scatter = m.scatter(x, y, s=20, c=df["P_seasonality_index"], alpha=0.9, vmin=-1.0, vmax=1.0, cmap='magma_r')  # invert colormap
+scatter = m.scatter(x, y, s=20, c=df["sens_P_mr1"], alpha=0.9, vmin=0., vmax=1.0, cmap='viridis')  # invert colormap
 cbar = plt.colorbar(scatter, ax=ax, pad=0.02, shrink=0.3, aspect=20)
 ax.set_xlim(np.nanmin(x) * 0.99, np.nanmax(x) * 1.01)
 ax.set_ylim(np.nanmin(y) * 0.99, np.nanmax(y) * 1.01)

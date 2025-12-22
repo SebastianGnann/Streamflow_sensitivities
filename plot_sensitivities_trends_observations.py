@@ -54,13 +54,16 @@ df = df[df["frac_snow_control"] < 0.2]
 df = df[df["mean_P"] > df["mean_Q"]]
 df = df.reset_index()
 
-n = 1.9#2.6#1.74 # 2.6 # 1.86 # Turc-Pike parameter
+n = 1.7 #
+# DE = 1.9
+# AUS = 2.2
+# AUS winter = 2.6
+# AUS summer = 1.7
 
 # choose either Germany or Australia
-country_nr = 4# 4 for Germany, 5 for Australia
+country_nr = 5# 4 for Germany, 5 for Australia
 df = df[df["country"] == country_nr]
-#df = df[df["seasonality_index"] > 1.4]
-#df = df[df["P_seasonality_index"] < 0]
+df = df[df["P_seasonality_index"] > 0]
 
 # transform data
 df["start_wateryear"] = df["start_wateryear"].apply(lambda x: np.array([float(y) for y in re.findall(r"\d{4}", x)]))
@@ -69,8 +72,8 @@ df["mean_P_over_time"] = df["mean_P_over_time"].apply(lambda x: np.array([float(
 df["mean_PET_over_time"] = df["mean_PET_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
 df["mean_Q_over_time"] = df["mean_Q_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
 df["aridity_over_time"] = df["aridity_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
-df["seasonality_index_over_time"] = df["seasonality_index_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
-df["P_seasonality_index_over_time"] = df["P_seasonality_index_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
+#df["seasonality_index_over_time"] = df["seasonality_index_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
+#df["P_seasonality_index_over_time"] = df["P_seasonality_index_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
 df["cor_PET_P_over_time"] = df["cor_PET_P_over_time"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
 df["sens_P_over_time_mr1"] = df["sens_P_over_time_mr1"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
 df["sens_PET_over_time_mr1"] = df["sens_PET_over_time_mr1"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
@@ -112,10 +115,10 @@ df['mean_Q_over_time'] = df['mean_Q_over_time']*365
 df['mean_Q_over_time_theory'] = df['mean_Q_over_time_theory']*365
 
 # list of variables to analyze
-variables = ['sens_P_over_time_mr1', 'sens_PET_over_time_mr1', 'sens_P_over_time_mr2', 'sens_PET_over_time_mr2',
+variables = ['sens_P_over_time_mr1', 'sens_PET_over_time_mr1', 'sens_P_over_time_mr1', 'sens_PET_over_time_mr1',
              'sens_P_over_time_theory', 'sens_PET_over_time_theory', 'mean_Q_over_time_theory',
-             'aridity_over_time', 'P_seasonality_index_over_time', 'seasonality_index_over_time',
-             'mean_P_over_time', 'mean_PET_over_time', 'mean_Q_over_time']
+             'aridity_over_time',
+             'mean_P_over_time', 'mean_PET_over_time', 'mean_Q_over_time'] # 'P_seasonality_index_over_time', 'seasonality_index_over_time',
 
 # Create new columns in df for trend storage
 for var in variables:
@@ -148,8 +151,8 @@ def plot_actual_changes(df, variable, ax=None):
     color_map = {
         'sens_P_over_time_mr1': 'tab:blue',
         'sens_PET_over_time_mr1': 'tab:orange',
-        'sens_P_over_time_mr2': 'tab:blue',
-        'sens_PET_over_time_mr2': 'tab:orange',
+        'sens_P_over_time_mr1': 'tab:blue',
+        'sens_PET_over_time_mr1': 'tab:orange',
         'mean_P_over_time': 'lightsteelblue',
         'mean_PET_over_time': 'sandybrown',
         'aridity_over_time': 'tab:grey',
@@ -163,8 +166,8 @@ def plot_actual_changes(df, variable, ax=None):
     theory_variable_map = {
         'sens_P_over_time_mr1': 'sens_P_over_time_theory',
         'sens_PET_over_time_mr1': 'sens_PET_over_time_theory',
-        'sens_P_over_time_mr2': 'sens_P_over_time_theory',
-        'sens_PET_over_time_mr2': 'sens_PET_over_time_theory',
+        'sens_P_over_time_mr1': 'sens_P_over_time_theory',
+        'sens_PET_over_time_mr1': 'sens_PET_over_time_theory',
         'mean_Q_over_time': 'mean_Q_over_time_theory'
     }
     theory_variable = theory_variable_map.get(variable, None)
@@ -241,8 +244,8 @@ def plot_actual_changes(df, variable, ax=None):
         'aridity_over_time': r'$E_p$/$P$ [-]',
         'sens_P_over_time_mr1': r'$s_P$ [-]',
         'sens_PET_over_time_mr1': r'$s_{Ep}$ [-]',
-        'sens_P_over_time_mr2': r'$s_P$ [-]',
-        'sens_PET_over_time_mr2': r'$s_{Ep}$ [-]',
+        'sens_P_over_time_mr1': r'$s_P$ [-]',
+        'sens_PET_over_time_mr1': r'$s_{Ep}$ [-]',
         'P_seasonality_index_over_time': r'$P_S$ [-]',
         'seasonality_index_over_time': r'$I_S$ [-]'
     }
@@ -255,8 +258,8 @@ def plot_actual_changes(df, variable, ax=None):
 # overwrite sensitivities with elasticities as a check
 #df['sens_P_over_time_mr1'] = df['sens_P_over_time_mr1'] / (df['mean_Q_over_time'] / df['mean_P_over_time'])
 #df['sens_PET_over_time_mr1'] = df['sens_PET_over_time_mr1'] / (df['mean_Q_over_time'] / df['mean_PET_over_time'])
-#df['sens_P_over_time_mr2'] = df['sens_P_over_time_mr2'] / (df['mean_Q_over_time'] / df['mean_P_over_time'])
-#df['sens_PET_over_time_mr2'] = df['sens_PET_over_time_mr2'] / (df['mean_Q_over_time'] / df['mean_PET_over_time'])
+#df['sens_P_over_time_mr1'] = df['sens_P_over_time_mr1'] / (df['mean_Q_over_time'] / df['mean_P_over_time'])
+#df['sens_PET_over_time_mr1'] = df['sens_PET_over_time_mr1'] / (df['mean_Q_over_time'] / df['mean_PET_over_time'])
 #df['sens_P_over_time_theory'] = df['sens_P_over_time_theory'] / (df['mean_Q_over_time'] / df['mean_P_over_time'])
 #df['sens_PET_over_time_theory'] = df['sens_PET_over_time_theory'] / (df['mean_Q_over_time'] / df['mean_PET_over_time'])
 

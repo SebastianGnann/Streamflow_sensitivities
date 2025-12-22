@@ -7,9 +7,13 @@ from functions import util_Turc
 import re
 import functions.plotting_fcts as pf
 import matplotlib.ticker as ticker
+from scipy.stats import gaussian_kde
 def fmt_func(x, pos):
     return f"{round(x, 1):.1f}"
 #mpl.use('TkAgg')
+
+# plots most of the figures in the supplement
+# some supplementary plots were also made using the other scripts, e.g. if the same plots were made with a different regression method
 
 # prepare data
 data_path = "D:/Data/"
@@ -56,7 +60,7 @@ df = df[df["mean_P"] > df["mean_Q"]]
 # remove catch
 df = df.reset_index()
 
-n = 2.5 # Turc-Pike parameter
+n = 2.2 # Turc-Pike parameter
 
 # transform data
 df["annual_P"] = df["annual_P"].apply(lambda x: np.array([float(i) for i in x.strip('[]').split()]))
@@ -105,7 +109,7 @@ ax1.set_xlabel(r"$E_p$/$P$ [-]")
 plt.savefig(figures_path + 'budyko_plot.png', dpi=600)
 
 # fit n value
-#df.loc[(df["country"] == 5) & (df["P_seasonality_index"] > 0), "country"] = 6
+df.loc[(df["country"] == 5) & (df["P_seasonality_index"] < 0), "country"] = 6
 
 P = df["mean_P"]
 PET = df["mean_PET"]
@@ -179,7 +183,7 @@ plt.savefig(figures_path + 'budyko_plot_fitted_n_per_country.png', dpi=600, bbox
 country_codes = sorted(set(df["country"]))  # Assumes exactly 4 countries
 colors = plt.cm.magma(np.linspace(0, 1, len(country_codes) + 1))
 country_colors = dict(zip(country_codes, colors))
-fig, axs = plt.subplots(2, 2, figsize=(8, 5), constrained_layout=True, sharex=True, sharey=True)
+fig, axs = plt.subplots(3, 2, figsize=(8, 5), constrained_layout=True, sharex=True, sharey=True)
 axs = axs.ravel()
 # Common Budyko elements for all panels
 P_vec = np.linspace(0.01, 10, 100)
@@ -604,94 +608,144 @@ print("Correlation between dQ/dQ(t-1) and BFI: ", np.round(cor_BFI, 2))
 #ax1.scatter(highlight["aridity_control"], highlight["sens_P_mr2"], s=50, c="tab:orange", alpha=0.8, lw=0)
 #ax2.scatter(highlight["aridity_control"], highlight["sens_PET_mr1"], s=50, c="tab:orange", alpha=0.8, lw=0)
 
-### forcing data comparison
 
-df_CAMELS_DE = pd.read_csv(results_path + 'CAMELS_DE_sensitivities.csv')
-df_CAMELS_DE["country"] = 4
-# ROBIN catchments
-df_ROBIN = pd.read_csv("D:/Python/ROBIN_CAMELS_DE/results/camels_de_ROBIN.csv")
-df_CAMELS_DE = df_CAMELS_DE[df_CAMELS_DE["gauge_id_native"].isin(df_ROBIN["ID"].values)]
+# make histogram of seasonality_index per country
+# make smoothed density plots (KDE) of seasonality_index per country instead of histogram
+country_codes = sorted(set(df["country"]))  # e.g. [2,3,4,5]
+n_countries = len(country_codes)
+colors = plt.cm.magma(np.linspace(0, 1, n_countries + 1))
+country_colors = dict(zip(country_codes, colors))
 
-df_CAMELS_DE_Caravan = pd.read_csv(results_path + 'CAMELS_DE_sensitivities_Caravan.csv')
-df_CAMELS_DE_Caravan["country"] = 4
-# ROBIN catchments
-df_ROBIN = pd.read_csv("D:/Python/ROBIN_CAMELS_DE/results/camels_de_ROBIN.csv")
-df_CAMELS_DE_Caravan = df_CAMELS_DE_Caravan[df_CAMELS_DE_Caravan["gauge_id_native"].isin(df_ROBIN["ID"].values)]
+fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in country_codes:
+    mask = df["country"] == country
+    data = df.loc[mask, "seasonality_index"].values
+    color = country_colors[country]
+    kde = gaussian_kde(data)
+    x = np.linspace(0, 2, 500)
+    y = kde(x)
+    #scale_factor = len(data)   # Adjust to visually match histogram density
+    #ax.plot(x, y, color=color, linewidth=2, label=country)
+    ax.fill_between(x, 0, y, color=color, alpha=0.5)
+    ax.set_xlabel(r"Seasonality Index [-]")
+ax.set_ylabel(r"Density [-]")
+ax.set_xlim([0, 2])
+ax.legend(title="Country", labels=['USA', 'GB', 'DE', 'AUS'])
+plt.savefig(figures_path + 'seasonality_index_kde_countries.png', dpi=600)
 
-df_CAMELS_AUS = pd.read_csv(results_path + 'CAMELS_AUS_sensitivities.csv')
-df_CAMELS_AUS["country"] = 5
-df_humans = pd.read_csv("D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_04_AnthropogenicInfluences.csv", sep=',', skiprows=0, encoding='latin-1')
-df_humans.rename(columns={'station_id': 'gauge_id_native'}, inplace=True)
-df_CAMELS_AUS = pd.merge(df_CAMELS_AUS, df_humans, on='gauge_id_native')
-df_CAMELS_AUS = df_CAMELS_AUS[df_CAMELS_AUS["river_di"]<0.2]
+fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in country_codes:
+    mask = df["country"] == country
+    data = df.loc[mask, "aridity_control"].values
+    color = country_colors[country]
+    kde = gaussian_kde(data)
+    x = np.linspace(0, 4, 500)
+    y = kde(x)
+    #scale_factor = len(data)   # Adjust to visually match histogram density
+    #ax.plot(x, y, color=color, linewidth=2, label=country)
+    ax.fill_between(x, 0, y, color=color, alpha=0.5)
+    ax.set_xlabel(r"Aridity Index [-]")
+ax.set_ylabel(r"Density [-]")
+ax.set_xlim([0, 3])
+#ax.set_xscale('log')
+ax.legend(title="Country", labels=['USA', 'GB', 'DE', 'AUS'])
+plt.savefig(figures_path + 'aridity_index_kde_countries.png', dpi=600)
 
-df_CAMELS_AUS_SILO = pd.read_csv(results_path + 'CAMELS_AUS_sensitivities_SILO.csv')
-df_CAMELS_AUS_SILO ["country"] = 5
-df_humans = pd.read_csv("D:/Data/CAMELS_AUS_v2/04_attributes/04_attributes/CatchmentAttributes_04_AnthropogenicInfluences.csv", sep=',', skiprows=0, encoding='latin-1')
-df_humans.rename(columns={'station_id': 'gauge_id_native'}, inplace=True)
-df_CAMELS_AUS_SILO = pd.merge(df_CAMELS_AUS_SILO , df_humans, on='gauge_id_native')
-df_CAMELS_AUS_SILO = df_CAMELS_AUS_SILO [df_CAMELS_AUS_SILO ["river_di"]<0.2]
+fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in country_codes:
+    mask = df["country"] == country
+    data = df.loc[mask, "BFI"].values
+    color = country_colors[country]
+    kde = gaussian_kde(data)
+    x = np.linspace(0, 1, 500)
+    y = kde(x)
+    #scale_factor = len(data)   # Adjust to visually match histogram density
+    #ax.plot(x, y, color=color, linewidth=2, label=country)
+    ax.fill_between(x, 0, y, color=color, alpha=0.5)
+    ax.set_xlabel(r"BFI [-]")
+ax.set_ylabel(r"Density [-]")
+ax.set_xlim([0, 1])
+ax.legend(title="Country", labels=['USA', 'GB', 'DE', 'AUS'])
+plt.savefig(figures_path + 'bfi_kde_countries.png', dpi=600)
 
-# compare CAMELS_DE and CAMELS_DE_Caravan P and PET sensitivities with two scatter plots
-fig, ax = plt.subplots(1, 2, figsize=(7, 3))
-ax[0].scatter(df_CAMELS_DE["sens_P_mr1"], df_CAMELS_DE_Caravan["sens_P_mr1"], s=10, alpha=0.5, label='P sensitivity')
-ax[0].plot([-0.3, 1.3], [-0.3, 1.3], color='grey', linestyle='--')
-ax[1].scatter(df_CAMELS_DE["sens_PET_mr1"], df_CAMELS_DE_Caravan["sens_PET_mr1"], s=10, alpha=0.5, label='PET sensitivity')
-ax[1].plot([-1.2, 0.6], [-1.2, 0.6], color='grey', linestyle='--')
-ax[0].set_xlabel(r'$s_{P}$ using CAMELS DE data')
-ax[0].set_ylabel(r'$s_{P}$ using CAMELS DE Caravan data')
-#ax[0].set_xlim([-0.25, 1.25])
-#ax[0].set_ylim([-0.25, 1.25])
-ax[1].set_xlabel(r'$s_{Ep}$ using CAMELS DE data')
-ax[1].set_ylabel(r'$s_{Ep}$ using CAMELS DE Caravan data')
-#ax[1].set_xlim([-1., 0.5])
-#ax[1].set_ylim([-1., 0.5])
-plt.tight_layout()
-plt.show()
-print("Correlation P sensitivity:", df_CAMELS_DE_Caravan["sens_P_mr1"].corr(df_CAMELS_DE["sens_P_mr1"], method='spearman'))
-print("Correlation PET sensitivity:", df_CAMELS_DE_Caravan["sens_PET_mr1"].corr(df_CAMELS_DE["sens_PET_mr1"], method='spearman'))
-mean_error_P = np.mean(np.abs(df_CAMELS_DE_Caravan["sens_P_mr1"] - df_CAMELS_DE["sens_P_mr1"]))# / np.abs(df_CAMELS_DE["sens_P_mr1"]))
-mean_error_PET = np.mean(np.abs(df_CAMELS_DE_Caravan["sens_PET_mr1"] - df_CAMELS_DE["sens_PET_mr1"]))# / np.abs(df_CAMELS_DE["sens_PET_mr1"]))
-print("Mean error P sensitivity:", np.round(mean_error_P, 2))
-print("Mean error PET sensitivity:", np.round(mean_error_PET, 2))
+# make histogram of BFI per country
+country_codes = sorted(set(df["country"]))  # e.g. [2,3,4,5]
+n_countries = len(country_codes)
+colors = plt.cm.magma(np.linspace(0, 1, n_countries+1))
+country_colors = dict(zip(country_codes, colors))
+fig, (ax) = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in country_codes:
+    mask = df["country"] == country
+    color = country_colors[country]
+    ax.hist(df.loc[mask, "BFI"],
+             bins=np.linspace(0, 1, 21),
+             alpha=0.7, color=color, label=country)
+ax.set_xlabel(r"BFI [-]")
+ax.set_ylabel(r"Count")
+ax.set_xlim([0, 1])
+ax.legend(title="Country", labels=['USA', 'GB', 'DE', 'AUS'])
+plt.savefig(figures_path + 'bfi_histogram_countries.png', dpi=600)
 
-fig, ax = plt.subplots(1, 2, figsize=(7, 3))
-ax[0].scatter(df_CAMELS_DE["mean_P"], df_CAMELS_DE_Caravan["mean_P"], s=10, alpha=0.5, label='P sensitivity')
-ax[0].plot([1, 5], [1, 5], color='grey', linestyle='--')
-ax[1].scatter(df_CAMELS_DE["mean_PET"], df_CAMELS_DE_Caravan["mean_PET"], s=10, alpha=0.5, label='PET sensitivity')
-ax[1].plot([1, 2.5], [1, 2.5], color='grey', linestyle='--')
-ax[0].set_xlabel(r'$P$ CAMELS DE data')
-ax[0].set_ylabel(r'$P$ CAMELS DE Caravan data')
-ax[1].set_xlabel(r'${E_p}$ CAMELS DE data')
-ax[1].set_ylabel(r'${E_p}$ CAMELS DE Caravan data')
-plt.tight_layout()
-plt.show()
-print("Correlation P :", df_CAMELS_DE_Caravan["mean_P"].corr(df_CAMELS_DE["mean_P"], method='spearman'))
-print("Correlation PET :", df_CAMELS_DE_Caravan["mean_PET"].corr(df_CAMELS_DE["mean_PET"], method='spearman'))
-mean_error_P = np.mean(np.abs(df_CAMELS_DE_Caravan["mean_P"] - df_CAMELS_DE["mean_P"]))# / np.abs(df_CAMELS_DE["mean_P"]))
-mean_error_PET = np.mean(np.abs(df_CAMELS_DE_Caravan["mean_PET"] - df_CAMELS_DE["mean_PET"]))# / np.abs(df_CAMELS_DE["mean_PET"]))
-print("Mean error P:", np.round(mean_error_P, 2))
-print("Mean error PET:", np.round(mean_error_PET, 2))
+# just for the three subsets for trend analysis
+colors = plt.cm.magma(np.linspace(0.5, 1, 3))
+country_colors = dict(zip([4,5,6], colors))
+df_filtered = df.copy()
+df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
+fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in [4,5,6]:
+    mask = df_filtered["country"] == country
+    data = df_filtered.loc[mask, "BFI"].values
+    color = country_colors[country]
+    kde = gaussian_kde(data)
+    x = np.linspace(0, 1, 500)
+    y = kde(x)
+    #scale_factor = len(data)   # Adjust to visually match histogram density
+    #ax.plot(x, y, color=color, linewidth=2, label=country)
+    ax.fill_between(x, 0, y, color=color, alpha=0.5)
+    ax.set_xlabel(r"BFI [-]")
+ax.set_ylabel(r"Density [-]")
+ax.set_xlim([0, 1])
+ax.legend(title="Country", labels=['DE', 'AUS $P_S$<0', 'AUS $P_S$>0'])
+plt.savefig(figures_path + 'bfi_kde_countries_filtered.png', dpi=600)
 
-# compare CAMELS_AUS and CAMELS_AUS_SILO P and PET sensitivities with two scatter plots
-fig, ax = plt.subplots(1, 2, figsize=(7, 3))
-ax[0].scatter(df_CAMELS_AUS["sens_P_mr1"], df_CAMELS_AUS_SILO["sens_P_mr1"], s=10, alpha=0.5, label='P sensitivity')
-ax[0].plot([-0.2, 1.2], [-0.2, 1.2], color='grey', linestyle='--')
-ax[1].scatter(df_CAMELS_AUS["sens_PET_mr1"], df_CAMELS_AUS_SILO["sens_PET_mr1"], s=10, alpha=0.5, label='PET sensitivity')
-ax[1].plot([-1.2, 0.2], [-1.2, 0.2], color='grey', linestyle='--')
-ax[0].set_xlabel(r'$s_{P}$ using CAMELS AUS data')
-ax[0].set_ylabel(r'$s_{P}$ using CAMELS AUS SILO data')
-#ax[0].set_xlim([-0.2, 1.2])
-#ax[0].set_ylim([-0.2, 1.2])
-ax[1].set_xlabel(r'$s_{Ep}$ using CAMELS AUS data')
-ax[1].set_ylabel(r'$s_{Ep}$ using CAMELS AUS SILO data')
-#ax[1].set_xlim([-1.2, 0.2])
-#ax[1].set_ylim([-1.2, 0.2])
-plt.tight_layout()
-plt.show()
-print("Correlation P sensitivity:", df_CAMELS_AUS_SILO["sens_P_mr1"].corr(df_CAMELS_AUS["sens_P_mr1"], method='spearman'))
-print("Correlation PET sensitivity:", df_CAMELS_AUS_SILO["sens_PET_mr1"].corr(df_CAMELS_AUS["sens_PET_mr1"], method='spearman'))
-mean_error_P = np.mean(np.abs(df_CAMELS_AUS_SILO["sens_P_mr1"] - df_CAMELS_AUS["sens_P_mr1"]))# / np.abs(df_CAMELS_AUS["sens_P_mr1"]))
-mean_error_PET = np.mean(np.abs(df_CAMELS_AUS_SILO["sens_PET_mr1"] - df_CAMELS_AUS["sens_PET_mr1"]))# / np.abs(df_CAMELS_AUS["sens_PET_mr1"]))
-print("Mean error P sensitivity:", np.round(mean_error_P, 2))
-print("Mean error PET sensitivity:", np.round(mean_error_PET, 2))
+colors = plt.cm.magma(np.linspace(0.5, 1, 3))
+country_colors = dict(zip([4,5,6], colors))
+df_filtered = df.copy()
+df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
+fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in [4,5,6]:
+    mask = df_filtered["country"] == country
+    data = df_filtered.loc[mask, "P_seasonality_index"].values
+    color = country_colors[country]
+    kde = gaussian_kde(data)
+    x = np.linspace(-1, 1, 500)
+    y = kde(x)
+    #scale_factor = len(data)   # Adjust to visually match histogram density
+    #ax.plot(x, y, color=color, linewidth=2, label=country)
+    ax.fill_between(x, 0, y, color=color, alpha=0.5)
+    ax.set_xlabel(r"$P_S$ [-]")
+ax.set_ylabel(r"Density [-]")
+ax.set_xlim([-1, 1])
+ax.legend(title="Country", labels=['DE', 'AUS $P_S$<0', 'AUS $P_S$>0'])
+plt.savefig(figures_path + 'Ps_kde_countries_filtered.png', dpi=600)
+
+colors = plt.cm.magma(np.linspace(0.5, 1, 3))
+country_colors = dict(zip([4,5,6], colors))
+df_filtered = df.copy()
+df_filtered.loc[(df_filtered["country"] == 5) & (df_filtered["P_seasonality_index"] > 0), "country"] = 6
+fig, ax = plt.subplots(1, 1, figsize=(5, 3), constrained_layout=True)
+for country in [4,5,6]:
+    mask = df_filtered["country"] == country
+    data = df_filtered.loc[mask, "frac_snow_control"].values
+    color = country_colors[country]
+    kde = gaussian_kde(data)
+    x = np.linspace(0, 1, 500)
+    y = kde(x)
+    #scale_factor = len(data)   # Adjust to visually match histogram density
+    #ax.plot(x, y, color=color, linewidth=2, label=country)
+    ax.fill_between(x, 0, y, color=color, alpha=0.5)
+    ax.set_xlabel(r"$f_S$ [-]")
+ax.set_ylabel(r"Density [-]")
+ax.set_xlim([0, 1])
+ax.legend(title="Country", labels=['DE', 'AUS $P_S$<0', 'AUS $P_S$>0'])
+plt.savefig(figures_path + 'fs_kde_countries_filtered.png', dpi=600)
